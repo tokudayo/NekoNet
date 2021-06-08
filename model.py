@@ -1,5 +1,7 @@
 import torch
 from torch import nn
+import numpy as np
+from torchinfo import summary
 
 class Net(nn.Module):
     def __init__(self):
@@ -11,10 +13,4 @@ class Net(nn.Module):
         return x
 
 net = Net()
-print(net.parameters())
-
-for param in net.parameters():
-    print(param.shape)
-
-    
-
+summary(net, (1, 3, 224, 224))
