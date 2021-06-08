@@ -1,8 +1,8 @@
 # CatFace
 Embedding from cat face for verification/recognition.
 ## TO-DO:
-- Choose a small backbone model. (done)
-- Triplet loss.
+- Choosing a small backbone model. (done)
+- Semi-hard triplet loss.
 - Training on sample data.
 - Dataloader.
 - Online hard triplet mining.
