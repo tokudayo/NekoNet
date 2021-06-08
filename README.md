@@ -1,5 +1,5 @@
 # CatFace
-Embedding from cat face for verification/recognition.
+CNN that extracts embeddings from cat faces for verification/recognition task.
 ## TO-DO:
 - Choosing a small backbone model. (done)
 - Semi-hard triplet loss.
