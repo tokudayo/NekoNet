@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch import functional as F
+from torch.nn import functional as F
 from torchinfo import summary
 
 class Identity(nn.Module):
@@ -24,6 +24,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
         self.backbone.classifier = Identity()
+        for param in self.backbone.parameters():
+            param.requires_grad = False
         self.fc = nn.Linear(1280, 64)
         self.l2_norm = L2Norm()
 
