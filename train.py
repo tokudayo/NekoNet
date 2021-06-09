@@ -2,7 +2,7 @@ import torch, os
 import numpy as np
 from model import Net
 from torchvision.io import read_image
-from torchvision import transforms, utils
+import torchvision.transforms as T
 
 
 class DataPipeline():
@@ -35,4 +35,14 @@ class DataPipeline():
                 batchX.append(img)
                 batchY.append(c)
             if len(batchX) == self.bs: break
-        return torch.Tensor(batchX), torch.Tensor(batchY)
+        return torch.stack(batchX), torch.Tensor(batchY)
+
+
+dl = DataPipeline('./data', 15, tsnf = T.Compose([T.Resize((224, 224)),
+                                                  lambda x : x/255.0,
+                                                  T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])]))
+
+print('ok')
+a, b = dl.get()
+print(a.shape)
+print(b.shape)
