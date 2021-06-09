@@ -24,7 +24,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
         self.backbone.classifier = Identity()
-        self.fc = nn.Linear(1280, 128)
+        self.fc = nn.Linear(1280, 64)
         self.l2_norm = L2Norm()
 
     def forward(self, x):
