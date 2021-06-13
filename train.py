@@ -1,6 +1,7 @@
 import torch
+from torchvision.transforms import transforms
 from model import Net
-from utils import DataPipeline
+from utils import *
 import torchvision.transforms as T
 from triplet_loss import TripletLoss
 
@@ -8,10 +9,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 epoch = 20
 batch_size = 32
 
-transform = T.Compose([T.Resize((224, 224)),
-                       lambda x : x/255.0,
+transform = T.Compose([lambda x : x/255.0,
                        T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
-loader = DataPipeline('./data', batch_size, tsnf = transform)
+loader = DataPipeline('./data', batch_size, tsnf = transform, image_size=(224, 224))
 
 model = Net()
 model = model.to(device)
