@@ -6,9 +6,9 @@ from matplotlib import pyplot as plt
 
 
 class DataPipeline():
-    def __init__(self, path, bs, tsnf=None, device='cpu', image_size=None):
+    def __init__(self, path, batch_size, tsnf=None, device='cpu', image_size=None):
         self.path = path
-        self.bs = bs
+        self.batch_size = batch_size
         self.tsnf = tsnf
         self.image_size = image_size
         self.class_data = []
@@ -25,11 +25,11 @@ class DataPipeline():
         while self.full_loop == False:
             batchX = []
             batchY = []
-            while len(batchX) < self.bs:
+            while len(batchX) < self.batch_size:
                 c = self.priority[self.ptr]
                 class_path = self.path + '/' + str(c)
                 for imname in self.class_data[c]:
-                    if len(batchX) == self.bs: break
+                    if len(batchX) == self.batch_size: break
                     img = read_image(class_path + '/' + imname)
                     if self.image_size:
                         img = Resize(self.image_size)(img)
