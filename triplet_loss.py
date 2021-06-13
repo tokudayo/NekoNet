@@ -110,9 +110,10 @@ def TripletSemiHardLoss(y_true, y_pred, device, margin=1.0):
 
 
 class TripletLoss(nn.Module):
-    def __init__(self, device):
+    def __init__(self, device, margin=1.0):
         super().__init__()
         self.device = device
+        self.margin = margin
 
     def forward(self, input, target, **kwargs):
-        return TripletSemiHardLoss(target, input, self.device)
+        return TripletSemiHardLoss(target, input, self.device, self.margin)
