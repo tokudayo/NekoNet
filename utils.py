@@ -32,7 +32,10 @@ class DataPipeline():
         self.full_loop = False
         return self
     
-    def __next__(self):
+    def generator(self):
+        self.priority = np.random.permutation(self.num_class)
+        self.ptr = 0
+        self.full_loop = False
         while self.full_loop == False:
             batchX = []
             batchY = []
