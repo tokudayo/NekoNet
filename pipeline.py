@@ -1,4 +1,5 @@
 import os, torch
+import numpy as np
 from torchvision.io import read_image
 from torchvision.transforms import Resize
 
