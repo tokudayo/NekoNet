@@ -4,11 +4,10 @@ from torchvision.io import read_image
 from torchvision.transforms import Resize
 
 class DataPipeline():
-    def __init__(self, path, batch_size, tsnf=None, device='cpu', image_size=None):
+    def __init__(self, path, batch_size, tsnf=None, device='cpu'):
         self.path = path
         self.batch_size = batch_size
         self.tsnf = tsnf
-        self.image_size = image_size
         self.class_data = []
         self.num_class = len(os.listdir(path))
         for c in range(self.num_class):
@@ -29,8 +28,6 @@ class DataPipeline():
                 for imname in self.class_data[c]:
                     if len(batchX) == self.batch_size: break
                     img = read_image(class_path + '/' + imname)
-                    if self.image_size:
-                        img = Resize(self.image_size)(img)
                     if self.tsnf: img = self.tsnf(img)
                     batchX.append(img)
                     batchY.append(c)
