@@ -17,7 +17,7 @@ out_dir = './exp/sample'
 transform = T.Compose([T.Resize((224, 224)),
                        lambda x : x/255.0,
                        T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
-loader = DataPipeline('./data', batch_size, tsnf = transform)
+loader = DataPipeline('./data/train', batch_size, tsnf = transform)
 
 model = Net()
 model = model.to(device)
