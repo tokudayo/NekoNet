@@ -4,7 +4,7 @@ CNN that extracts embeddings from cat faces for verification/recognition task.
 - Choosing a small backbone model. (done)
 - Semi-hard triplet loss. ([alfonmedela's implementation](https://github.com/alfonmedela/triplet-loss-pytorch))
 - Dataloader. (done)
-- Checkpoint saver.
+- Checkpoint saver. (done)
 - Testing utilities.
 - Training on sample data.
 - Augmentation.

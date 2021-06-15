@@ -24,9 +24,7 @@ criterion = TripletLoss(device)
 optimizer = torch.optim.Adam(model.parameters())
 
 # Training
-loss_epoch = []
-
-# Continue/start new training
+## Continue/start new training
 try:
     os.mkdir(out_dir)
 except:
@@ -40,6 +38,8 @@ if os.path.isfile(out_dir + '/last.pt'):
 else:
     current = 0
 
+loss_epoch = []
+## Training loop
 for ep in range(current + 1, epochs + 1):
     # Processing per epoch
     loss_batch = []
