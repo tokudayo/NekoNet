@@ -1,6 +1,7 @@
-import torch
+import torch, os
 from torchvision.transforms import transforms
 from model import Net
+from pipeline import DataPipeline
 from utils import *
 import torchvision.transforms as T
 from triplet_loss import TripletLoss
@@ -8,7 +9,7 @@ from matplotlib import pyplot as plt
 
 # Model and training configuration
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-epoch = 20
+epochs = 20
 batch_size = 16
 val_step = 3
 out_dir = './exp/sample'
@@ -24,7 +25,22 @@ optimizer = torch.optim.Adam(model.parameters())
 
 # Training
 loss_epoch = []
-for ep in range(epoch):
+
+# Continue/start new training
+try:
+    os.mkdir(out_dir)
+except:
+    pass
+if os.path.isfile(out_dir + '/last.pt'):
+    state = torch.load(out_dir + '/last.pt')
+    model.load_state_dict(state['state_dict'])
+    optimizer.load_state_dict(state['optimizer'])
+    current = state['epoch']
+    print(f'Resume training at epoch {current + 1}')
+else:
+    current = 0
+
+for ep in range(current + 1, epochs + 1):
     # Processing per epoch
     loss_batch = []
     print(f'Epoch {ep + 1}')
@@ -40,7 +56,8 @@ for ep in range(epoch):
         loss.backward()
         optimizer.step()
     loss_epoch.append(np.average(loss_batch))
-    print(f'Epoch {ep + 1} loss = {loss_epoch[-1]}')
+    print(f'Epoch {ep} loss = {loss_epoch[-1]}')
+    save_model(model, optimizer, ep, out_dir + f'/last.pt')
 
 # Result
 plt.plot(loss_epoch)
