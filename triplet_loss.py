@@ -114,21 +114,19 @@ def GOR(labels, embeddings, sample_size=None):
     dimension = embeddings.shape[1]
     # If no sample size if specified, default to 2*batch_size
     if sample_size is None:
-        sample_size = 2*batch_size
-    anchor = negative = torch.zeros((sample_size, dimension), device=embeddings.device)
+        sample_size = 4*batch_size
+    pairwise_product = torch.zeros((sample_size, ), device=embeddings.device)
 
-    # Samples of anchor - negative pair
+    # Random sampling of non-matching pairs
     cnt = 0
     while cnt < sample_size:
-        i1 = torch.randint(0, batch_size)
-        i2 = torch.randint(0, batch_size)
+        i1 = torch.randint(batch_size, (1, )).item()
+        i2 = torch.randint(batch_size, (1, )).item()
         if labels[i1] != labels[i2]:
-            anchor[cnt] = embeddings[i1]
-            negative[cnt] = embeddings[i2]
+            pairwise_product[cnt] = torch.sum(torch.mul(embeddings[i1], embeddings[i2]))
             cnt += 1
 
     # Calculate the loss term
-    pairwise_product = torch.sum(torch.mul(anchor, negative), 1)
     M1 = torch.sum(pairwise_product)/sample_size
     M2 = torch.sum(torch.square(pairwise_product))/sample_size
 
@@ -137,11 +135,12 @@ def GOR(labels, embeddings, sample_size=None):
 
 
 class TripletLossWithGOR(nn.Module):
-    def __init__(self, device, margin=1.0, gor_sample_size=None):
+    def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0):
         super().__init__()
         self.device = device
         self.margin = margin
         self.gor_sample_size = gor_sample_size
+        self.alpha_gor = alpha_gor
 
     def forward(self, input, target, **kwargs):
-        return TripletSemiHardLoss(target, input, self.device, self.margin) + GOR(target, input, self.gor_sample_size)
+        return TripletSemiHardLoss(target, input, self.device, self.margin) + self.alpha_gor*GOR(target, input, self.gor_sample_size)
