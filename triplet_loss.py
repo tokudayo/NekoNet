@@ -112,12 +112,12 @@ def TripletSemiHardLoss(y_true, y_pred, device, margin=1.0):
 def GOR(labels, embeddings, sample_size=None):
     batch_size = embeddings.shape[0]
     dimension = embeddings.shape[1]
-    anchor = negative = torch.zeros((sample_size, dimension), device=embeddings.device)
-
-    # Samples of anchor - negative pair
     # If no sample size if specified, default to 2*batch_size
     if sample_size is None:
         sample_size = 2*batch_size
+    anchor = negative = torch.zeros((sample_size, dimension), device=embeddings.device)
+
+    # Samples of anchor - negative pair
     cnt = 0
     while cnt < sample_size:
         i1 = torch.randint(0, batch_size)
@@ -131,7 +131,7 @@ def GOR(labels, embeddings, sample_size=None):
     pairwise_product = torch.sum(torch.mul(anchor, negative), 1)
     M1 = torch.sum(pairwise_product)/sample_size
     M2 = torch.sum(torch.square(pairwise_product))/sample_size
-    
+
     gor = torch.square(M1) + (0 if M2 - 1/dimension < 0 else M2 - 1/dimension)
     return gor
 
