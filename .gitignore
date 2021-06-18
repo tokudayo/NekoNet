@@ -130,4 +130,5 @@ dmypy.json
 
 .vscode/
 test.*
+verify.ipynb
 exp/*
