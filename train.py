@@ -12,9 +12,10 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 epochs = 50
 batch_size = 16
 val_step = 3
-out_dir = './exp/samplegor'
+out_dir = './exp/samplegor2'
 
 transform = T.Compose([T.Resize((224, 224)),
+                       T.transforms.ColorJitter(brightness = .5, contrast = 0.3),
                        lambda x : x/255.0,
                        T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
 loader = DataLoader('./data/train', batch_size, tsnf = transform)

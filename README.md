@@ -7,7 +7,7 @@ CNN that extracts embeddings from cat faces for verification/recognition task.
 - Checkpoint saver. (done)
 - Testing utilities. (done)
 - Training on sample data. (done)
-- Augmentation.
+- Augmentation. (only changes brightness and contrast)
 - Tracking of some metrics. (loss only)
 - Global orthogonal regularization (done)
 - Vector length loss. (?)
