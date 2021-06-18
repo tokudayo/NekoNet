@@ -10,7 +10,6 @@ CNN that extracts embeddings from cat faces for verification/recognition task.
 - Augmentation. (only changes brightness and contrast)
 - Tracking of some metrics. (loss only)
 - Global orthogonal regularization (done)
-- Vector length loss. (?)
-- Some training to evaluate training time & accuracy.
+- Vector length loss. (skipped)
 - Finalizing model structure.
 - Training, evaluation and tuning.
