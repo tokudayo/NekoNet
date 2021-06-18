@@ -4,15 +4,15 @@ from model import Net
 from dataloader import DataLoader
 from utils import *
 import torchvision.transforms as T
-from triplet_loss import TripletLoss
+from triplet_loss import TripletLossWithGOR
 from matplotlib import pyplot as plt
 
 # Model and training configuration
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-epochs = 20
+epochs = 50
 batch_size = 16
 val_step = 3
-out_dir = './exp/sample'
+out_dir = './exp/samplegor'
 
 transform = T.Compose([T.Resize((224, 224)),
                        lambda x : x/255.0,
@@ -21,7 +21,7 @@ loader = DataLoader('./data/train', batch_size, tsnf = transform)
 
 model = Net()
 model = model.to(device)
-criterion = TripletLoss(device)
+criterion = TripletLossWithGOR(device)
 optimizer = torch.optim.Adam(model.parameters())
 
 # Training
