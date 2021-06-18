@@ -4,7 +4,7 @@ from model import Net
 from dataloader import DataLoader
 from utils import *
 import torchvision.transforms as T
-from triplet_loss import TripletLossWithGOR
+from loss import TripletLossWithGOR
 from matplotlib import pyplot as plt
 
 # Model and training configuration
