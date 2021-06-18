@@ -3,7 +3,7 @@ import numpy as np
 from torchvision.io import read_image
 from torchvision.transforms import Resize
 
-class DataPipeline():
+class DataLoader():
     def __init__(self, path, batch_size, tsnf=None, device='cpu'):
         self.path = path
         self.batch_size = batch_size

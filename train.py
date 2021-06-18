@@ -1,7 +1,7 @@
 import torch, os
 from torchvision.transforms import transforms
 from model import Net
-from pipeline import DataPipeline
+from dataloader import DataLoader
 from utils import *
 import torchvision.transforms as T
 from triplet_loss import TripletLoss
@@ -17,7 +17,7 @@ out_dir = './exp/sample'
 transform = T.Compose([T.Resize((224, 224)),
                        lambda x : x/255.0,
                        T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
-loader = DataPipeline('./data/train', batch_size, tsnf = transform)
+loader = DataLoader('./data/train', batch_size, tsnf = transform)
 
 model = Net()
 model = model.to(device)
