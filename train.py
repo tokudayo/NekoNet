@@ -1,6 +1,6 @@
 import torch, os
 from torchvision.transforms import transforms
-from model import Net
+from model import *
 from dataloader import DataLoader
 from utils import *
 import torchvision.transforms as T
@@ -20,7 +20,7 @@ transform = T.Compose([T.Resize((224, 224)),
                        T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
 loader = DataLoader('./data/train', batch_size, tsnf = transform)
 
-model = Net()
+model = MobileNetV3L64()
 model = model.to(device)
 criterion = TripletLossWithGOR(device)
 optimizer = torch.optim.Adam(model.parameters())
