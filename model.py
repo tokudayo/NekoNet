@@ -1,8 +1,7 @@
-import torch, timm
+import timm
+import torchvision.transforms as T
 from torch import nn
 from torch.nn import functional as F
-from torchinfo import summary
-
 class Identity(nn.Module):
     def __init__(self):
         super(Identity, self).__init__()
@@ -48,6 +47,12 @@ class MobileNetV3L64(nn.Module):
             param.requires_grad = False
         self.fc = nn.Linear(1280, 64)
         self.l2_norm = L2Norm()
+
+        # Required transformation of [0; 255] (3, H, W) tensor input
+        self.transform = T.Compose([T.Resize((224, 224)),
+                         T.transforms.ColorJitter(brightness = .5, contrast = 0.3),
+                         lambda x : x/255.0,
+                         T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
 
     def forward(self, x):
         x = self.backbone(x)
