@@ -9,7 +9,7 @@ from loss import TripletLossWithGOR
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Configuration
-from conf import *
+from cfg import *
 model = MobileNetV3L64()
 model = model.to(device)
 criterion = TripletLossWithGOR(device)
