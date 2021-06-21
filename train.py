@@ -10,9 +10,8 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Configuration
 from cfg import *
-model = MobileNetV3L64()
-model = model.to(device)
-criterion = TripletLossWithGOR(device)
+model = MobileNetV3L64().to(device)
+criterion = TripletLossWithGOR(device, alpha_gor = alpha_gor, margin = margin)
 optimizer = torch.optim.Adam(model.parameters())
 
 loader = DataLoader(train_path, batch_size, tsnf = model.transform)

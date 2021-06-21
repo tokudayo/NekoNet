@@ -109,13 +109,13 @@ def TripletSemiHardLoss(y_true, y_pred, device, margin=1.0):
     triplet_loss = triplet_loss.to(dtype=embeddings.dtype)
     return triplet_loss
 
-def GOR(labels, embeddings, sample_size=None):
+def GOR(labels, embeddings, device, sample_size=None):
     batch_size = embeddings.shape[0]
     dimension = embeddings.shape[1]
     # If no sample size if specified, default to 2*batch_size
     if sample_size is None:
         sample_size = 4*batch_size
-    pairwise_product = torch.zeros((sample_size, ), device=embeddings.device)
+    pairwise_product = torch.zeros((sample_size, ), device=device)
 
     # Random sampling of non-matching pairs
     cnt = 0
@@ -143,4 +143,4 @@ class TripletLossWithGOR(nn.Module):
         self.alpha_gor = alpha_gor
 
     def forward(self, input, target, **kwargs):
-        return TripletSemiHardLoss(target, input, self.device, self.margin) + self.alpha_gor*GOR(target, input, self.gor_sample_size)
+        return TripletSemiHardLoss(target, input, self.device, self.margin) + self.alpha_gor*GOR(target, input, self.device, self.gor_sample_size)
