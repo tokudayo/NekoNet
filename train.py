@@ -10,11 +10,17 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Configuration
 from cfg import *
-model = MobileNetV3L64().to(device)
+model = MobileNetV3L64()
+model = model.to(device)
 criterion = TripletLossWithGOR(device, alpha_gor = alpha_gor, margin = margin)
 optimizer = torch.optim.Adam(model.parameters())
 
-loader = DataLoader(train_path, batch_size, tsnf = model.transform)
+# Required transformation of [0; 255] (3, H, W) tensor input
+transform = T.Compose([T.Resize((224, 224)),
+                       T.transforms.ColorJitter(brightness = .5, contrast = 0.3),
+                       lambda x : x/255.0,
+                       T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
+loader = DataLoader(train_path, batch_size, tsnf = transform)
 
 # Training
 ## Continue/start new training

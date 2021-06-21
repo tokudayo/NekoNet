@@ -1,5 +1,5 @@
 # Some training configuration
-epochs = 50
+epochs = 20
 batch_size = 16
 val_step = None
 train_path = './data/train'
