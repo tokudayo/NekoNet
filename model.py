@@ -1,4 +1,4 @@
-import torch
+import torch, timm
 from torch import nn
 from torch.nn import functional as F
 from torchinfo import summary
@@ -19,11 +19,31 @@ class L2Norm(nn.Module):
         return F.normalize(x, p = 2, dim = -1)
 
 
-class Net(nn.Module):
+class EffNetV2S128(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
-        self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
+        super(EffNetV2S128, self).__init__()
+        # self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
+        self.backbone = timm.create_model('tf_efficientnetv2_s', pretrained=True)
         self.backbone.classifier = Identity()
+        # Freeze backbone
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+        self.fc = nn.Linear(1280, 128)
+        self.l2_norm = L2Norm()
+
+    def forward(self, x):
+        x = self.backbone(x)
+        x = self.fc(x)
+        x = self.l2_norm(x)
+        return x
+
+class MobileNetV3L64(nn.Module):
+    def __init__(self):
+        super(MobileNetV3L64, self).__init__()
+        # self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
+        self.backbone = timm.create_model('mobilenetv3_large_100', pretrained=True)
+        self.backbone.classifier = Identity()
+        # Freeze backbone
         for param in self.backbone.parameters():
             param.requires_grad = False
         self.fc = nn.Linear(1280, 64)
@@ -35,7 +55,5 @@ class Net(nn.Module):
         x = self.l2_norm(x)
         return x
 
-
 if __name__ == "__main__":
-    net = Net()
-    print(net)
+    pass
