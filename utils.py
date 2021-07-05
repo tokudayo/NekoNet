@@ -36,3 +36,11 @@ def save_model(model, opt, ep, path):
         'optimizer': opt.state_dict(),
     }
     torch.save(state, path)
+
+
+import yaml
+def load_yaml(path):
+    file = open(path, 'r')
+    options = yaml.load(file, Loader=yaml.FullLoader)
+    file.close()
+    return options
