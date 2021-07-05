@@ -9,36 +9,42 @@ from loss import TripletLoss, TripletLossWithGOR
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--output', type=str, help='Experiment output path', required=True)
-    parser.add_argument('-w', '--weight', type=str, help='Load initial model weight', required=False)
-    parser.add_argument('-c', '--config', type=str, default='./output', help='Target directory', required=True)
+    parser.add_argument('-c', '--config', type=str, default='config.yaml', help='Training configuration', required=False)
     args = parser.parse_args()
     return args
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+def train(cfg_path):
+    # Load configuration file
+    try:
+        opt = load_yaml(cfg_path)
+    except:
+        print(f"Failed to load configuration file {cfg_path}.")
+        return
 
-def train():
-    # Configuration
-    epochs = 20
-    batch_size = 32
-    val_step = None
-    train_path = './data/cropped224'
-    val_path = None
-    test_path = None
-    out_dir = './exp/run1'
+    # General conf.
+    epochs = opt['epochs']
+    batch_size = opt['batch_size']
+    train_path = opt['train_data']
+    val_path = opt['val_data']
+    out_dir = opt['out_dir']
 
-    # Triplet loss with GOR conf
-    alpha_gor = 1.0
-    margin = 1.0
-
+    # Model conf.
     model = MobileNetV3L64()
     model = model.to(device)
-    criterion = TripletLoss(device)
+    
+    # Triplet loss with GOR conf.
+    alpha_gor = 1.0
+    margin = 1.0
+    if 'alpha_gor' in opt.keys(): alpha_gor = opt['alpha_gor']
+    if 'loss_margin' in opt.keys(): margin = opt['loss_margin']
+    criterion = TripletLoss(device, margin)
     optimizer = torch.optim.Adam(model.parameters())
+    
 
-    # ImageNet preprocessing of [0; 1] (3, H, W) tensor input
-    transform = T.Compose([#T.Resize((224, 224)),
+    # ImageNet preprocessing of [0; 255] (3, H, W) RGB tensor input
+    transform = T.Compose([T.Resize((224, 224)),
                         lambda x : x/255.0,
                         T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
     loader = DataLoader(train_path, batch_size, tsnf = transform)
@@ -86,4 +92,4 @@ def train():
 
 if __name__=="__main__":
     args = parse_args()
-    train(args)
+    train(args.config)
