@@ -132,3 +132,4 @@ dmypy.json
 test.*
 verify.ipynb
 exp/*
+data/cropped224/*
