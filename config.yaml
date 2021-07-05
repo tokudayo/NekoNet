@@ -1,0 +1,13 @@
+---
+  # General configuration
+  epochs: 20
+  batch_size: 16
+  weight: null
+  train_data: ./data/train
+  val_data: null
+  out_dir: sample0
+  
+  # Triplet loss + GOR configuration
+  loss_margin: 1.0
+  alpha_gor: 1.0
+  
