@@ -133,7 +133,14 @@ def GOR(labels, embeddings, device, sample_size=None):
     gor = torch.square(M1) + (0 if M2 - 1/dimension < 0 else M2 - 1/dimension)
     return gor
 
-
+class TripletLoss(nn.Module):
+    def __init__(self, device, margin=1.0):
+        super().__init__()
+        self.device = device
+        self.margin = margin
+    def forward(self, input, target, **kwargs):
+        return TripletSemiHardLoss(target, input, self.device, self.margin)
+    
 class TripletLossWithGOR(nn.Module):
     def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0):
         super().__init__()
