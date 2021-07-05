@@ -4,20 +4,30 @@ from model import *
 from utils import *
 
 from dataloader import DataLoader
-from loss import TripletLossWithGOR
+from loss import TripletLoss, TripletLossWithGOR
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Configuration
-from cfg import *
+epochs = 20
+batch_size = 32
+val_step = None
+train_path = './data/cropped224'
+val_path = None
+test_path = None
+out_dir = './exp/run1'
+
+# Triplet loss with GOR conf
+alpha_gor = 1.0
+margin = 1.0
+
 model = MobileNetV3L64()
 model = model.to(device)
-criterion = TripletLossWithGOR(device, alpha_gor = alpha_gor, margin = margin)
+criterion = TripletLoss(device)
 optimizer = torch.optim.Adam(model.parameters())
 
-# Required transformation of [0; 255] (3, H, W) tensor input
-transform = T.Compose([T.Resize((224, 224)),
-                       T.transforms.ColorJitter(brightness = .5, contrast = 0.3),
+# ImageNet preprocessing of [0; 1] (3, H, W) tensor input
+transform = T.Compose([#T.Resize((224, 224)),
                        lambda x : x/255.0,
                        T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
 loader = DataLoader(train_path, batch_size, tsnf = transform)
