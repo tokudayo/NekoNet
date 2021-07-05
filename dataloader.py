@@ -4,7 +4,7 @@ from torchvision.io import read_image
 from torchvision.transforms import Resize
 
 class DataLoader():
-    def __init__(self, path, batch_size, tsnf=None, device='cpu'):
+    def __init__(self, path, batch_size, tsnf=None):
         self.path = path
         self.batch_size = batch_size
         self.tsnf = tsnf
@@ -13,8 +13,7 @@ class DataLoader():
         for c in range(self.num_class):
             class_path = path + '/' + str(c)
             self.class_data.append(os.listdir(class_path))
-
-    
+        
     def generator(self):
         self.priority = np.random.permutation(self.num_class)
         self.ptr = 0
