@@ -13,8 +13,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 def train(cfg_path):
     # Load configuration file
     try:
@@ -31,20 +29,27 @@ def train(cfg_path):
     out_dir = opt['out_dir']
 
     # Model conf.
-    model = MobileNetV3L64()
+    if opt['weight'] is not None:
+        model = torch.load(opt['weight'])
+    else:
+        model = MobileNetV3L64()
     model = model.to(device)
+    freeze(model, opt['freeze'])
+    unfreeze(model, opt['unfreeze'])
+
+    params_info(model)
     
     # Triplet loss with GOR conf.
     alpha_gor = 1.0
     margin = 1.0
     if 'alpha_gor' in opt.keys(): alpha_gor = opt['alpha_gor']
     if 'loss_margin' in opt.keys(): margin = opt['loss_margin']
-    criterion = TripletLoss(device, margin)
+    criterion = TripletLossWithGOR(device, margin)
     optimizer = torch.optim.Adam(model.parameters())
     
 
     # ImageNet preprocessing of [0; 255] (3, H, W) RGB tensor input
-    transform = T.Compose([T.Resize((224, 224)),
+    transform = T.Compose([#T.Resize((224, 224)),
                         lambda x : x/255.0,
                         T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
     loader = DataLoader(train_path, batch_size, tsnf = transform)
@@ -60,11 +65,12 @@ def train(cfg_path):
         model.load_state_dict(state['state_dict'])
         optimizer.load_state_dict(state['optimizer'])
         current = state['epoch'] + 1
+        loss_epoch = torch.load(out_dir + '/loss.pt')
         print(f'Resume training at epoch {current + 1}')
     else:
         current = 0
-
-    loss_epoch = []
+        loss_epoch = []
+    
     ## Training loop
     for ep in range(current, epochs):
         # Processing per epoch
@@ -84,6 +90,7 @@ def train(cfg_path):
         loss_epoch.append(np.average(loss_batch))
         print(f'Epoch {ep} loss = {loss_epoch[-1]}')
         save_model(model, optimizer, ep, out_dir + f'/last.pt')
+        torch.save(loss_epoch, out_dir + '/loss.pt')
 
     torch.save(model, out_dir + '/final.pt')
     # Result
@@ -92,4 +99,6 @@ def train(cfg_path):
 
 if __name__=="__main__":
     args = parse_args()
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Running on {device}")
     train(args.config)
