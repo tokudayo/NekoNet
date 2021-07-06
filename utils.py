@@ -50,17 +50,21 @@ def load_yaml(path):
 def freeze(model, layers):
     if layers is None: return
     if layers == 'all':
+        print("Freezing all params...")
         for param in model.parameters(): param.requires_grad = False
     else:
         if type(layers) == str: layers = [layers]
         for layer in layers:
+            print(f"Freezing {layer}")
             exec(f'''for param in model.{layer}.parameters():\n    param.requires_grad = False''')
 
 def unfreeze(model, layers):
     if layers is None: return
     if layers == 'all':
+        print("Unfreezing all params...")
         for param in model.parameters(): param.requires_grad = True
     else:
         if type(layers) == str: layers = [layers]
         for layer in layers:
+            print(f"Unfreezing {layer}")
             exec(f'''for param in model.{layer}.parameters():\n    param.requires_grad = True''')
