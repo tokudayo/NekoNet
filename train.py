@@ -57,7 +57,7 @@ def train(cfg_path):
     # Training
     ## Continue/start new training
     try:
-        os.mkdir(out_dir)
+        os.makedirs(out_dir)
     except:
         pass
     if os.path.isfile(out_dir + '/last.pt'):
