@@ -1,0 +1,16 @@
+---
+  # General configuration
+  epochs: 20
+  batch_size: 32
+  train_data: ./data/cropped224
+  val_data: null
+  out_dir: exp/mobile64_stage2
+  
+  # Triplet loss + GOR configuration
+  loss_margin: 1.0
+  alpha_gor: 1.0
+  
+  # Model configuration
+  weight: exp/mobile64_stage1/final.pt
+  freeze: all
+  unfreeze: [fc, l2_norm, backbone.classifier, backbone.act2, backbone.conv_head, backbone.global_pool, "backbone.blocks[6]", "backbone.blocks[5]"]
