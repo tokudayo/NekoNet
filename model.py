@@ -24,9 +24,6 @@ class EffNetV2S128(nn.Module):
         # self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
         self.backbone = timm.create_model('tf_efficientnetv2_s', pretrained=True)
         self.backbone.classifier = Identity()
-        # Freeze backbone
-        for param in self.backbone.parameters():
-            param.requires_grad = False
         self.fc = nn.Linear(1280, 128)
         self.l2_norm = L2Norm()
 
@@ -42,9 +39,6 @@ class MobileNetV3L64(nn.Module):
         # self.backbone = torch.hub.load('pytorch/vision:v0.9.0', 'mobilenet_v2', pretrained=True)
         self.backbone = timm.create_model('mobilenetv3_large_100', pretrained=True)
         self.backbone.classifier = Identity()
-        # Freeze backbone
-        for param in self.backbone.parameters():
-            param.requires_grad = False
         self.fc = nn.Linear(1280, 64)
         self.l2_norm = L2Norm()
 
