@@ -44,3 +44,19 @@ def load_yaml(path):
     options = yaml.load(file, Loader=yaml.FullLoader)
     file.close()
     return options
+
+# Horrible and unsafe way to freeze/unfreeze layers, but I'm desperate
+
+def freeze(model, layers):
+    if layers == 'all':
+        for param in model.parameters(): param.requires_grad = False
+    else: 
+        for layer in layers:
+            exec(f'''for param in model.{layer}.parameters():\n    param.requires_grad = False''')
+
+def unfreeze(model, layers):
+    if layers == 'all':
+        for param in model.parameters(): param.requires_grad = True
+    else: 
+        for layer in layers:
+            exec(f'''for param in model.{layer}.parameters():\n    param.requires_grad = True''')
