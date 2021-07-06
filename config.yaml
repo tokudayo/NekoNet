@@ -11,3 +11,6 @@
   loss_margin: 1.0
   alpha_gor: 1.0
   
+  # Model configuration
+  freeze: all
+  unfreeze: classifier
