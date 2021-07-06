@@ -1,16 +1,16 @@
 ---
   # General configuration
-  epochs: 20
-  batch_size: 16
-  weight: null
+  epochs: 100
+  batch_size: 32
   train_data: ./data/train
   val_data: null
-  out_dir: exp/sample0
+  out_dir: exp/sample
   
   # Triplet loss + GOR configuration
   loss_margin: 1.0
   alpha_gor: 1.0
   
   # Model configuration
+  weight: null
   freeze: all
-  unfreeze: classifier
+  unfreeze: [fc, l2_norm]
