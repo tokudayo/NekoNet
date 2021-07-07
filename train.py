@@ -5,7 +5,7 @@ from model import *
 from utils import *
 
 from dataloader import DataLoader
-from loss import TripletLoss, TripletLossWithGOR
+from loss import *
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -44,7 +44,7 @@ def train(cfg_path):
     margin = 1.0
     if 'alpha_gor' in opt.keys(): alpha_gor = opt['alpha_gor']
     if 'loss_margin' in opt.keys(): margin = opt['loss_margin']
-    criterion = TripletLossWithGOR(device, margin)
+    criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
     optimizer = torch.optim.Adam(model.parameters())
     
 
