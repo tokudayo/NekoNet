@@ -30,14 +30,18 @@ def train(cfg_path):
 
     # Model conf.
     if opt['weight'] is not None:
-        model = torch.load(opt['weight'])
+        try:
+            model = torch.load(opt['weight'])
+        except:
+            print(f"Failed to load weight from {opt['weight']}.")
+            return
     else:
         model = select_model(opt['model'])
         if model is None: return
     model = model.to(device)
+    print(model)
     freeze(model, opt['freeze'])
     unfreeze(model, opt['unfreeze'])
-
     params_info(model)
     
     # Triplet loss with GOR conf.
@@ -47,13 +51,17 @@ def train(cfg_path):
     if 'loss_margin' in opt.keys(): margin = opt['loss_margin']
     if opt['loss_type'] == 'semihard':
         criterion = SemiHardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
-    else:
+    elif opt['loss_type'] == 'hard':
         criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
+    else:
+        print("Unknown loss metric.")
+        return
+    print(f"Loss metric: {opt['loss_type']} triplet loss.")
     optimizer = torch.optim.Adam(model.parameters())
     
 
     # ImageNet preprocessing of [0; 255] (3, H, W) RGB tensor input
-    transform = T.Compose([#T.Resize((224, 224)),
+    transform = T.Compose([T.Resize((224, 224)),
                         lambda x : x/255.0,
                         T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
     loader = DataLoader(train_path, tsnf = transform)
@@ -70,7 +78,7 @@ def train(cfg_path):
         optimizer.load_state_dict(state['optimizer'])
         current = state['epoch'] + 1
         loss_epoch = torch.load(out_dir + '/loss.pt')
-        print(f'Resume training at epoch {current + 1}')
+        print(f'Resuming training at epoch {current + 1}')
     else:
         current = 0
         loss_epoch = []
@@ -92,14 +100,15 @@ def train(cfg_path):
             loss.backward()
             optimizer.step()
         loss_epoch.append(np.average(loss_batch))
-        print(f'Epoch {ep} loss = {loss_epoch[-1]}')
+        print(f'Epoch {ep + 1} loss = {loss_epoch[-1]}')
         save_model(model, optimizer, ep, out_dir + f'/last.pt')
         torch.save(loss_epoch, out_dir + '/loss.pt')
 
     torch.save(model, out_dir + '/final.pt')
+
     # Result
     plt.plot(loss_epoch)
-    plt.show()
+    plt.savefig(os.path.join(out_dir,'loss.png'))
 
 if __name__=="__main__":
     args = parse_args()
