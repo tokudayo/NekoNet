@@ -1,18 +1,18 @@
 ---
   # General configuration
-  epochs: 10
+  epochs: 30
   batch_size: 32
   train_data: ./data/cropped224
   val_data: null
-  out_dir: exp/run2/stage1
+  out_dir: exp/run2/stage4
   
   # Triplet loss + GOR configuration
-  loss_type: semihard
+  loss_type: hard
   loss_margin: 0.5
   alpha_gor: 1.0
   
   # Model configuration
-  weight: null
+  weight: exp/run2/stage3/final.pt
   model: MobileNetV3L_64
-  freeze: all
-  unfreeze: [fc, l2_norm]
+  freeze: null
+  unfreeze: all
