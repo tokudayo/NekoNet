@@ -1,11 +1,11 @@
 import argparse
 import torch, os
 from matplotlib import pyplot as plt
-from model import *
+from models import *
 from utils import *
-
-from dataloader import DataLoader
 from loss import *
+from dataloader import DataLoader
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -32,7 +32,7 @@ def train(cfg_path):
     if opt['weight'] is not None:
         model = torch.load(opt['weight'])
     else:
-        model = MobileNetV3L64()
+        model = select_model(opt['model'])
     model = model.to(device)
     freeze(model, opt['freeze'])
     unfreeze(model, opt['unfreeze'])
@@ -44,7 +44,10 @@ def train(cfg_path):
     margin = 1.0
     if 'alpha_gor' in opt.keys(): alpha_gor = opt['alpha_gor']
     if 'loss_margin' in opt.keys(): margin = opt['loss_margin']
-    criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
+    if opt['loss_type'] == 'semihard':
+        criterion = SemiHardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
+    else:
+        criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
     optimizer = torch.optim.Adam(model.parameters())
     
 
