@@ -7,10 +7,12 @@
   out_dir: exp/mobile64_stage2
   
   # Triplet loss + GOR configuration
+  loss_type: semihard
   loss_margin: 1.0
   alpha_gor: 1.0
   
   # Model configuration
   weight: exp/mobile64_stage1/final.pt
+  model: MobileNetV3_64
   freeze: all
   unfreeze: [fc, l2_norm, backbone.classifier, backbone.act2, backbone.conv_head, backbone.global_pool, "backbone.blocks[6]", "backbone.blocks[5]"]

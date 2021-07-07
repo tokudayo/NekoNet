@@ -7,10 +7,12 @@
   out_dir: exp/mobile64_stage1
   
   # Triplet loss + GOR configuration
+  loss_type: semihard
   loss_margin: 1.0
   alpha_gor: 1.0
   
   # Model configuration
   weight: null
+  model: MobileNetV3_64
   freeze: all
   unfreeze: [fc, l2_norm]
