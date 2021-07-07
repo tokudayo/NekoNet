@@ -1,0 +1,18 @@
+---
+  # General configuration
+  epochs: 20
+  batch_size: 16
+  train_data: ./data/sample/train
+  val_data: null
+  out_dir: exp/sample
+  
+  # Triplet loss + GOR configuration
+  loss_type: semihard
+  loss_margin: 1.0
+  alpha_gor: 1.0
+  
+  # Model configuration
+  weight: null
+  model: MobileNetV3L_64
+  freeze: all
+  unfreeze: [fc, l2_norm]
