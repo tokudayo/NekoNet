@@ -26,7 +26,7 @@ class DataLoader():
                 class_path = self.path + '/' + str(c)
                 for imname in self.class_data[c]:
                     if len(batchX) == self.batch_size: break
-                    img = read_image(class_path + '/' + imname)
+                    img = read_image(self.path_to(c, imname))
                     if self.tsnf: img = self.tsnf(img)
                     batchX.append(img)
                     batchY.append(c)
@@ -41,3 +41,23 @@ class DataLoader():
 
     def class_size(self, c):
         return len(self.class_data[c])
+
+    def path_to(self, c, e):
+        return self.path + '/' + str(c) + '/' + e
+
+    def random_pair(self, same_class=False, transform=True):
+        if same_class:
+            c = np.random.randint(0, self.num_class)
+            p1 = p2 = ''
+            while p1 == p2:
+                p1, p2 = np.random.choice(self.class_data[c], 2)
+            p1 = self.path_to(c, p1)
+            p2 = self.path_to(c, p2)
+        else:
+            c1 = np.random.randint(0, self.num_class)
+            p1 = np.random.choice(self.class_data[c1])
+            p1 = self.path_to(c1, p1)
+            c2 = np.random.randint(0, self.num_class)
+            p2 = np.random.choice(self.class_data[c2])
+            p2 = self.path_to(c2, p2)
+        return p1, p2
