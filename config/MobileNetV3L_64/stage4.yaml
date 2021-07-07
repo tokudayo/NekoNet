@@ -1,0 +1,16 @@
+---
+  # General configuration
+  epochs: 20
+  batch_size: 32
+  train_data: ./data/cropped224
+  val_data: null
+  out_dir: exp/mobile64_stage4
+  
+  # Triplet loss + GOR configuration
+  loss_margin: 1.0
+  alpha_gor: 1.0
+  
+  # Model configuration
+  weight: exp/mobile64_stage3/final.pt
+  freeze: null
+  unfreeze: all
