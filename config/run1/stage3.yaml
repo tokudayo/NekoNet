@@ -4,7 +4,7 @@
   batch_size: 32
   train_data: ./data/cropped224
   val_data: null
-  out_dir: exp/mobile64_stage1
+  out_dir: exp/mobile64_stage3
   
   # Triplet loss + GOR configuration
   loss_type: semihard
@@ -12,7 +12,7 @@
   alpha_gor: 1.0
   
   # Model configuration
-  weight: null
-  model: MobileNetV3_64
-  freeze: all
-  unfreeze: [fc, l2_norm]
+  weight: exp/mobile64_stage2/final.pt
+  model: MobileNetV3L_64
+  freeze: null
+  unfreeze: all
