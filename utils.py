@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 from matplotlib import pyplot as plt
+from models import *
 
 def params_info(net):
     total = 0
@@ -46,7 +47,6 @@ def load_yaml(path):
     return options
 
 # Horrible and unsafe way to freeze/unfreeze layers, but I'm desperate
-
 def freeze(model, layers):
     if layers is None: return
     if layers == 'all':
@@ -68,3 +68,12 @@ def unfreeze(model, layers):
         for layer in layers:
             print(f"Unfreezing {layer}")
             exec(f'''for param in model.{layer}.parameters():\n    param.requires_grad = True''')
+
+
+def select_model(choice):
+    module = __import__('models')
+    try:
+        class_ = getattr(module, choice)
+        return class_()
+    except:
+        print(f'Class {choice} not found. You can define a your model in models.py')
