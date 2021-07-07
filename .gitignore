@@ -133,3 +133,5 @@ test.*
 verify.ipynb
 exp/*
 data/cropped224/*
+data/valtestcropped224/*
+alignment/*
