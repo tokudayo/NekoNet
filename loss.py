@@ -2,7 +2,46 @@ from numpy import negative
 import torch
 import torch.nn as nn
 
-def pairwise_distance_torch(embeddings, device):
+def _get_anchor_positive_triplet_mask(labels, device):
+    # Return a 2D mask where mask[a, p] is True iff a and p are distinct and have same label.
+    indices_not_equal = torch.eye(labels.shape[0]).to(device).byte() ^ 1
+
+    # Check if labels[i] == labels[j]
+    labels_equal = torch.unsqueeze(labels, 0) == torch.unsqueeze(labels, 1)
+
+    mask = indices_not_equal * labels_equal
+
+    return mask
+
+def _get_anchor_negative_triplet_mask(labels):
+    # Return a 2D mask where mask[a, n] is True iff a and n have distinct labels.
+
+    # Check if labels[i] != labels[k]
+    labels_equal = torch.unsqueeze(labels, 0) == torch.unsqueeze(labels, 1)
+    mask = labels_equal ^ 1
+
+    return mask
+
+def _get_triplet_mask(labels, device):
+ 
+    # Check that i, j and k are distinct
+    indices_equal = torch.eye(labels.size(0), dtype=torch.bool, device=labels.device)
+    indices_not_equal = ~indices_equal
+    i_not_equal_j = indices_not_equal.unsqueeze(2)
+    i_not_equal_k = indices_not_equal.unsqueeze(1)
+    j_not_equal_k = indices_not_equal.unsqueeze(0)
+
+    distinct_indices = (i_not_equal_j & i_not_equal_k) & j_not_equal_k
+
+    label_equal = labels.unsqueeze(0) == labels.unsqueeze(1)
+    i_equal_j = label_equal.unsqueeze(2)
+    i_equal_k = label_equal.unsqueeze(1)
+
+    valid_labels = ~i_equal_k & i_equal_j
+    mask = valid_labels & distinct_indices
+    return mask.to(device)
+
+def _pairwise_distance(embeddings, device):
     """Computes the pairwise distance matrix with numerical stability.
     output[i, j] = || feature[i, :] - feature[j, :] ||_2
     Args:
@@ -37,7 +76,7 @@ def pairwise_distance_torch(embeddings, device):
     pairwise_distances = torch.mul(pairwise_distances.to(device), mask_offdiagonals.to(device))
     return pairwise_distances
 
-def TripletSemiHardLoss(y_true, y_pred, device, margin=1.0):
+def _semihard(labels, embeddings, device, margin=1.0):
     """Computes the triplet loss_functions with semi-hard negative mining.
        The loss_functions encourages the positive distances (between a pair of embeddings
        with the same labels) to be smaller than the minimum negative distance
@@ -53,13 +92,11 @@ def TripletSemiHardLoss(y_true, y_pred, device, margin=1.0):
          name: Optional name for the op.
        """
 
-    labels, embeddings = y_true, y_pred
-
     # Reshape label tensor to [batch_size, 1].
     lshape = labels.shape
     labels = torch.reshape(labels, [lshape[0], 1])
 
-    pdist_matrix = pairwise_distance_torch(embeddings, device)
+    pdist_matrix = _pairwise_distance(embeddings, device)
 
     # Build pairwise binary adjacency matrix.
     adjacency = torch.eq(labels, labels.transpose(0, 1))
@@ -109,10 +146,60 @@ def TripletSemiHardLoss(y_true, y_pred, device, margin=1.0):
     triplet_loss = triplet_loss.to(dtype=embeddings.dtype)
     return triplet_loss
 
-def GOR(labels, embeddings, device, sample_size=None):
+def _hard(labels, embeddings, device, margin=1.0, hardest=False):
+    """
+    Args:
+        labels: labels of the batch, of size (batch_size,)
+        embeddings: tensor of shape (batch_size, embed_dim)
+    Returns:
+        triplet_loss: scalar tensor containing the triplet loss
+    """
+    pairwise_dist = _pairwise_distance(embeddings, device)
+
+    if hardest:
+        # Get the hardest positive pairs
+        mask_anchor_positive = _get_anchor_positive_triplet_mask(labels, device).float()
+        valid_positive_dist = pairwise_dist * mask_anchor_positive
+        hardest_positive_dist, _ = torch.max(valid_positive_dist, dim=1, keepdim=True)
+
+        # Get the hardest negative pairs
+        mask_anchor_negative = _get_anchor_negative_triplet_mask(labels).float()
+        max_anchor_negative_dist, _ = torch.max(pairwise_dist, dim=1, keepdim=True)
+        anchor_negative_dist = pairwise_dist + max_anchor_negative_dist * (
+                1.0 - mask_anchor_negative)
+        hardest_negative_dist, _ = torch.min(anchor_negative_dist, dim=1, keepdim=True)
+
+        # Combine biggest d(a, p) and smallest d(a, n) into final triplet loss
+        triplet_loss = torch.nn.functional.relu(hardest_positive_dist - hardest_negative_dist + 0.1)
+        triplet_loss = torch.mean(triplet_loss)
+    else:
+        anc_pos_dist = pairwise_dist.unsqueeze(dim=2)
+        anc_neg_dist = pairwise_dist.unsqueeze(dim=1)
+
+        # Compute a 3D tensor of size (batch_size, batch_size, batch_size)
+        # triplet_loss[i, j, k] will contain the triplet loss of anc=i, pos=j, neg=k
+        # Uses broadcasting where the 1st argument has shape (batch_size, batch_size, 1)
+        # and the 2nd (batch_size, 1, batch_size)
+        loss = anc_pos_dist - anc_neg_dist + margin
+
+        mask = _get_triplet_mask(labels, device).float()
+        triplet_loss = loss * mask
+
+        # Remove negative losses (i.e. the easy triplets)
+        triplet_loss = torch.nn.functional.relu(triplet_loss)
+
+        # Count number of hard triplets (where triplet_loss > 0)
+        hard_triplets = torch.gt(triplet_loss, 1e-16).float()
+        num_hard_triplets = torch.sum(hard_triplets)
+
+        triplet_loss = torch.sum(triplet_loss) / (num_hard_triplets + 1e-16)
+
+    return triplet_loss
+
+def _gor(labels, embeddings, device, sample_size=None):
     batch_size = embeddings.shape[0]
     dimension = embeddings.shape[1]
-    # If no sample size if specified, default to 2*batch_size
+    # If no sample size if specified, default to 4*batch_size
     if sample_size is None:
         sample_size = 4*batch_size
     pairwise_product = torch.zeros((sample_size, ), device=device)
@@ -133,15 +220,15 @@ def GOR(labels, embeddings, device, sample_size=None):
     gor = torch.square(M1) + (0 if M2 - 1/dimension < 0 else M2 - 1/dimension)
     return gor
 
-class TripletLoss(nn.Module):
+class SemiHardTripletLoss(nn.Module):
     def __init__(self, device, margin=1.0):
         super().__init__()
         self.device = device
         self.margin = margin
     def forward(self, input, target, **kwargs):
-        return TripletSemiHardLoss(target, input, self.device, self.margin)
+        return _semihard(target, input, self.device, self.margin)
     
-class TripletLossWithGOR(nn.Module):
+class SemiHardTripletLossWithGOR(nn.Module):
     def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0):
         super().__init__()
         self.device = device
@@ -150,4 +237,16 @@ class TripletLossWithGOR(nn.Module):
         self.alpha_gor = alpha_gor
 
     def forward(self, input, target, **kwargs):
-        return TripletSemiHardLoss(target, input, self.device, self.margin) + self.alpha_gor*GOR(target, input, self.device, self.gor_sample_size)
+        return _semihard(target, input, self.device, self.margin) + self.alpha_gor*_gor(target, input, self.device, self.gor_sample_size)
+
+class HardTripletLossWithGOR(nn.Module):
+    def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0, hardest=False):
+        super().__init__()
+        self.device = device
+        self.margin = margin
+        self.gor_sample_size = gor_sample_size
+        self.alpha_gor = alpha_gor
+        self.hardest = hardest
+
+    def forward(self, input, target, **kwargs):
+        return _hard(target, input, self.device, margin=self.margin, hardest=self.hardest) + self.alpha_gor*_gor(target, input, self.device, self.gor_sample_size)
