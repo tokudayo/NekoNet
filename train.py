@@ -33,6 +33,7 @@ def train(cfg_path):
         model = torch.load(opt['weight'])
     else:
         model = select_model(opt['model'])
+        if model is None: return
     model = model.to(device)
     freeze(model, opt['freeze'])
     unfreeze(model, opt['unfreeze'])
@@ -55,7 +56,7 @@ def train(cfg_path):
     transform = T.Compose([#T.Resize((224, 224)),
                         lambda x : x/255.0,
                         T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
-    loader = DataLoader(train_path, batch_size, tsnf = transform)
+    loader = DataLoader(train_path, tsnf = transform)
 
     # Training
     ## Continue/start new training
@@ -79,7 +80,7 @@ def train(cfg_path):
         # Processing per epoch
         loss_batch = []
         print(f'Epoch {ep + 1}')
-        for index, (x, y) in enumerate(loader.generator()):
+        for index, (x, y) in enumerate(loader.generator(batch_size)):
             # Processing per batch
             x = x.to(device)
             y = y.to(device)
