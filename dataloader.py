@@ -4,9 +4,8 @@ from torchvision.io import read_image
 from torchvision.transforms import Resize
 
 class DataLoader():
-    def __init__(self, path, batch_size, tsnf=None):
+    def __init__(self, path, tsnf=None):
         self.path = path
-        self.batch_size = batch_size
         self.tsnf = tsnf
         self.class_data = []
         self.num_class = len(os.listdir(path))
@@ -14,18 +13,18 @@ class DataLoader():
             class_path = path + '/' + str(c)
             self.class_data.append(os.listdir(class_path))
         
-    def generator(self):
+    def generator(self, batch_size=32):
         self.priority = np.random.permutation(self.num_class)
         self.ptr = 0
         self.full_loop = False
         while self.full_loop == False:
             batchX = []
             batchY = []
-            while len(batchX) < self.batch_size:
+            while len(batchX) < batch_size:
                 c = self.priority[self.ptr]
                 class_path = self.path + '/' + str(c)
                 for imname in self.class_data[c]:
-                    if len(batchX) == self.batch_size: break
+                    if len(batchX) == batch_size: break
                     img = read_image(self.path_to(c, imname))
                     if self.tsnf: img = self.tsnf(img)
                     batchX.append(img)
@@ -61,3 +60,16 @@ class DataLoader():
             p2 = np.random.choice(self.class_data[c2])
             p2 = self.path_to(c2, p2)
         return p1, p2
+
+    # Not functional
+    def remap(self, mappingpath='./labelmap.pt'):
+        path = self.path
+        mapping = []
+        index = 0
+
+        for folder in os.listdir(path):
+            os.rename(path + '/' + folder, path + '/' + str(index))
+            mapping.append(folder)
+            index += 1
+
+        torch.save(mapping, mappingpath)
