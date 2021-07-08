@@ -61,6 +61,12 @@ class DataLoader():
             p2 = self.path_to(c2, p2)
         return p1, p2
 
+    def count_all(self):
+        total = 0
+        for c in range(self.num_class):
+            total += len(self.class_data[c])
+        return total
+
     # Not functional
     def remap(self, mappingpath='./labelmap.pt'):
         path = self.path
