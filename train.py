@@ -1,6 +1,7 @@
 import argparse
 import torch, os
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 from models import *
 from utils import *
 from loss import *
@@ -84,18 +85,18 @@ def train(cfg_path):
         loss_epoch = []
     
     ## Training loop
-    for ep in range(current, epochs):
+    for ep in tqdm(range(current, epochs), desc='Overall progrress'):
         # Processing per epoch
         loss_batch = []
-        print(f'Epoch {ep + 1}')
-        for index, (x, y) in enumerate(loader.generator(batch_size)):
+        #print(f'Epoch {ep + 1}')
+        for index, (x, y) in tqdm(enumerate(loader.generator(batch_size)), desc=f'Epoch {ep + 1}', leave=False, total=int(loader.count_all()/batch_size)):
             # Processing per batch
             x = x.to(device)
             y = y.to(device)
             embeddings = model(x)
             loss = criterion(embeddings, y)
             loss_batch.append(loss.item())
-            print(f'Batch {index + 1} loss = {loss.item()}')
+            # print(f'Batch {index + 1} loss = {loss.item()}')
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
