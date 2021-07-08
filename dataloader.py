@@ -4,10 +4,17 @@ from torchvision.io import read_image
 from torchvision.transforms import Resize
 
 class DataLoader():
-    def __init__(self, path, tsnf=None):
+    def __init__(self, path, tsnf=None, cache_path=None):
         self.path = path
         self.tsnf = tsnf
         self.class_data = []
+        if cache_path:
+            try:
+                self.cache = torch.load(cache_path)
+            except:
+                self.cache = None
+        else:
+            self.cache = None
         self.num_class = len(os.listdir(path))
         for c in range(self.num_class):
             class_path = path + '/' + str(c)
@@ -22,18 +29,24 @@ class DataLoader():
             batchY = []
             while len(batchX) < batch_size:
                 c = self.priority[self.ptr]
-                class_path = self.path + '/' + str(c)
                 for imname in self.class_data[c]:
                     if len(batchX) == batch_size: break
-                    img = read_image(self.path_to(c, imname))
-                    if self.tsnf: img = self.tsnf(img)
+                    if self.cache is None:
+                        img = self.read(self.path_to(c, imname))
+                    else:
+                        img = self.cache[c][imname]
                     batchX.append(img)
                     batchY.append(c)
-                self.ptr += 1
+                self.ptr += 1   
                 if self.ptr == self.num_class:
                     self.ptr = 0
                     self.full_loop = True
             yield torch.stack(batchX), torch.Tensor(batchY)
+
+    def read(self, path):
+        img = read_image(path)
+        if self.tsnf: img = self.tsnf(img)
+        return img
 
     def example_from_class(self, c):
         return np.random.choice(self.class_data[c])
@@ -67,15 +80,14 @@ class DataLoader():
             total += len(self.class_data[c])
         return total
 
-    # Not functional
-    def remap(self, mappingpath='./labelmap.pt'):
-        path = self.path
-        mapping = []
-        index = 0
-
-        for folder in os.listdir(path):
-            os.rename(path + '/' + folder, path + '/' + str(index))
-            mapping.append(folder)
-            index += 1
-
-        torch.save(mapping, mappingpath)
+    def create_cache(self, outpath):
+        cachelist = []
+        print("Hello")
+        for c in range(self.num_class):
+            d = dict()
+            for e in self.class_data[c]:
+                img = self.read(self.path_to(c, e))
+                d[e] = img
+            cachelist.append(d)
+        print(cachelist)
+        torch.save(cachelist, outpath)

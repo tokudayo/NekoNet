@@ -65,7 +65,7 @@ def train(cfg_path):
     transform = T.Compose([T.Resize((224, 224)),
                         lambda x : x/255.0,
                         T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
-    loader = DataLoader(train_path, tsnf = transform)
+    loader = DataLoader(train_path, tsnf = transform, cache_path='samplecache.pt')
 
     # Training
     ## Continue/start new training
