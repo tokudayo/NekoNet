@@ -1,8 +1,8 @@
-from numpy import negative
 import torch
 import torch.nn as nn
 
-def _get_anchor_positive_triplet_mask(labels, device):
+def _get_anchor_positive_triplet_mask(labels):
+    device = labels.device
     # Return a 2D mask where mask[a, p] is True iff a and p are distinct and have same label.
     indices_not_equal = torch.eye(labels.shape[0]).to(device).byte() ^ 1
 
@@ -18,14 +18,14 @@ def _get_anchor_negative_triplet_mask(labels):
 
     # Check if labels[i] != labels[k]
     labels_equal = torch.unsqueeze(labels, 0) == torch.unsqueeze(labels, 1)
-    mask = labels_equal ^ 1
+    mask = labels_equal.byte() ^ 1
 
     return mask
 
-def _get_triplet_mask(labels, device):
- 
+def _get_triplet_mask(labels):
     # Check that i, j and k are distinct
-    indices_equal = torch.eye(labels.size(0), dtype=torch.bool, device=labels.device)
+    device = labels.device
+    indices_equal = torch.eye(labels.size(0), device=device).bool()
     indices_not_equal = ~indices_equal
     i_not_equal_j = indices_not_equal.unsqueeze(2)
     i_not_equal_k = indices_not_equal.unsqueeze(1)
@@ -38,10 +38,10 @@ def _get_triplet_mask(labels, device):
     i_equal_k = label_equal.unsqueeze(1)
 
     valid_labels = ~i_equal_k & i_equal_j
-    mask = valid_labels & distinct_indices
-    return mask.to(device)
+    mask = (valid_labels & distinct_indices).byte()
+    return mask
 
-def _pairwise_distance(embeddings, device):
+def _pairwise_distance(embeddings):
     """Computes the pairwise distance matrix with numerical stability.
     output[i, j] = || feature[i, :] - feature[j, :] ||_2
     Args:
@@ -49,6 +49,8 @@ def _pairwise_distance(embeddings, device):
     Returns:
       pairwise_distances: 2-D Tensor of size [number of data, number of data].
     """
+
+    device = embeddings.device
 
     # pairwise distance matrix with precise embeddings
     precise_embeddings = embeddings.to(dtype=torch.float32)
@@ -96,7 +98,7 @@ def _semihard(labels, embeddings, device, margin=1.0):
     lshape = labels.shape
     labels = torch.reshape(labels, [lshape[0], 1])
 
-    pdist_matrix = _pairwise_distance(embeddings, device)
+    pdist_matrix = _pairwise_distance(embeddings)
 
     # Build pairwise binary adjacency matrix.
     adjacency = torch.eq(labels, labels.transpose(0, 1))
@@ -154,11 +156,11 @@ def _hard(labels, embeddings, device, margin=1.0, hardest=False):
     Returns:
         triplet_loss: scalar tensor containing the triplet loss
     """
-    pairwise_dist = _pairwise_distance(embeddings, device)
+    pairwise_dist = _pairwise_distance(embeddings)
 
     if hardest:
         # Get the hardest positive pairs
-        mask_anchor_positive = _get_anchor_positive_triplet_mask(labels, device).float()
+        mask_anchor_positive = _get_anchor_positive_triplet_mask(labels).float()
         valid_positive_dist = pairwise_dist * mask_anchor_positive
         hardest_positive_dist, _ = torch.max(valid_positive_dist, dim=1, keepdim=True)
 
@@ -182,7 +184,7 @@ def _hard(labels, embeddings, device, margin=1.0, hardest=False):
         # and the 2nd (batch_size, 1, batch_size)
         loss = anc_pos_dist - anc_neg_dist + margin
 
-        mask = _get_triplet_mask(labels, device).float()
+        mask = _get_triplet_mask(labels).float()
         triplet_loss = loss * mask
 
         # Remove negative losses (i.e. the easy triplets)
@@ -195,31 +197,22 @@ def _hard(labels, embeddings, device, margin=1.0, hardest=False):
         triplet_loss = torch.sum(triplet_loss) / (num_hard_triplets + 1e-16)
 
     return triplet_loss
+  
+def _gor(labels, embeddings):
+    dim = embeddings.shape[1]
 
-def _gor(labels, embeddings, device, sample_size=None):
-    batch_size = embeddings.shape[0]
-    dimension = embeddings.shape[1]
-    # If no sample size if specified, default to 4*batch_size
-    if sample_size is None:
-        sample_size = 4*batch_size
-    pairwise_product = torch.zeros((sample_size, ), device=device)
+    pairwise_product = embeddings @ embeddings.T
+    anchor_negative_mask = _get_anchor_negative_triplet_mask(labels)
 
-    # Random sampling of non-matching pairs
-    cnt = 0
-    while cnt < sample_size:
-        i1 = torch.randint(batch_size, (1, )).item()
-        i2 = torch.randint(batch_size, (1, )).item()
-        if labels[i1] != labels[i2]:
-            pairwise_product[cnt] = torch.sum(torch.mul(embeddings[i1], embeddings[i2]))
-            cnt += 1
-
-    # Calculate the loss term
-    M1 = torch.sum(pairwise_product)/sample_size
-    M2 = torch.sum(torch.square(pairwise_product))/sample_size
-
-    gor = torch.square(M1) + (0 if M2 - 1/dimension < 0 else M2 - 1/dimension)
-    return gor
+    ff = pairwise_product * anchor_negative_mask
+    N = torch.sum(torch.gt(ff, 1e-16).float())
     
+    M1 = 1.0/N*torch.sum(ff)
+    M2 = 1.0/N*torch.sum(torch.square(ff))
+    Lgor = torch.square(M1)
+    if M2 - 1/dim > 0: Lgor += M2 - 1/dim
+    return Lgor
+
 class SemiHardTripletLossWithGOR(nn.Module):
     def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0):
         super().__init__()
@@ -229,7 +222,7 @@ class SemiHardTripletLossWithGOR(nn.Module):
         self.alpha_gor = alpha_gor
 
     def forward(self, input, target, **kwargs):
-        return _semihard(target, input, self.device, self.margin) + self.alpha_gor*_gor(target, input, self.device, self.gor_sample_size)
+        return _semihard(target, input, self.device, self.margin) + self.alpha_gor*_gor(target, input)
 
 class HardTripletLossWithGOR(nn.Module):
     def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0, hardest=False):
@@ -241,4 +234,4 @@ class HardTripletLossWithGOR(nn.Module):
         self.hardest = hardest
 
     def forward(self, input, target, **kwargs):
-        return _hard(target, input, self.device, margin=self.margin, hardest=self.hardest) + self.alpha_gor*_gor(target, input, self.device, self.gor_sample_size)
+        return _hard(target, input, self.device, margin=self.margin, hardest=self.hardest) + self.alpha_gor*_gor(target, input)
