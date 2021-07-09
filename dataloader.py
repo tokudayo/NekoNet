@@ -79,15 +79,3 @@ class DataLoader():
         for c in range(self.num_class):
             total += len(self.class_data[c])
         return total
-
-    def create_cache(self, outpath):
-        cachelist = []
-        print("Hello")
-        for c in range(self.num_class):
-            d = dict()
-            for e in self.class_data[c]:
-                img = self.read(self.path_to(c, e))
-                d[e] = img
-            cachelist.append(d)
-        print(cachelist)
-        torch.save(cachelist, outpath)
