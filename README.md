@@ -11,13 +11,18 @@ Our team's original intent was focused on the cat stuff only, but we believe the
 
 ## Table of contents
 1. [Methodology overview](#methodology-overview)
-    * The cat face dataset
-    * Model structure and techniques
-2. Installation
-3. Pretrained models
-4. Training your custom network
+    * [The cat face dataset](#cat-face-dataset)
+    * [Model structure and techniques](#model-structure-and-techniques)
+2. [Installation](#installation)
+3. [Pretrained models](#pretrained-models)
+4. [Training your own network](#training-your-own-network)
 
-## Methodology overview
+### Methodology overview
+#### Cat face dataset
+#### Model structure and techniques
+### Installation
+### Pretrained models
+### Training your own network
 
 ## TO-DO:
 - Choosing a small backbone model. (done)
