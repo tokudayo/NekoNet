@@ -54,6 +54,8 @@ def train(cfg_path):
         criterion = SemiHardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
     elif opt['loss_type'] == 'hard':
         criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
+    elif opt['loss_type'] == 'hardest':
+        criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor, hardest=True)
     else:
         print("Unknown loss metric.")
         return
