@@ -9,7 +9,7 @@ Our work was much inspired by [Adam Klein's report](http://cs230.stanford.edu/pr
 
 Our team's original intent was focused on the cat stuff only, but we believe these tools can be used for training embedding extractor of other objects (e.g., human faces) as long as you have the data.
 
-## Table of contents
+### Table of contents
 1. [Methodology overview](#methodology-overview)
     * [The cat face dataset](#cat-face-dataset)
     * [Model structure and techniques](#model-structure-and-techniques)
