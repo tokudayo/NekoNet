@@ -51,11 +51,11 @@ def train(cfg_path):
     if 'alpha_gor' in opt.keys(): alpha_gor = opt['alpha_gor']
     if 'loss_margin' in opt.keys(): margin = opt['loss_margin']
     if opt['loss_type'] == 'semihard':
-        criterion = SemiHardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
+        criterion = SemiHardTripletLossWithGOR(margin, alpha_gor=alpha_gor)
     elif opt['loss_type'] == 'hard':
-        criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor)
+        criterion = HardTripletLossWithGOR(margin, alpha_gor=alpha_gor)
     elif opt['loss_type'] == 'hardest':
-        criterion = HardTripletLossWithGOR(device, margin, alpha_gor=alpha_gor, hardest=True)
+        criterion = HardTripletLossWithGOR(margin, alpha_gor=alpha_gor, hardest=True)
     else:
         print("Unknown loss metric.")
         return
