@@ -8,6 +8,7 @@ class DataLoader():
         self.path = path
         self.tsnf = tsnf
         self.class_data = []
+        self.labelmap = []
         if cache_path:
             try:
                 self.cache = torch.load(cache_path)
@@ -16,9 +17,14 @@ class DataLoader():
         else:
             self.cache = None
         self.num_class = len(os.listdir(path))
-        for c in range(self.num_class):
-            class_path = path + '/' + str(c)
+        for folder in os.listdir(path):
+            class_path = os.path.join(path, folder)
+            self.labelmap.append(folder)
             self.class_data.append(os.listdir(class_path))
+        # for c in range(self.num_class):
+        #     class_path = path + '/' + str(c)
+        #     self.labelmap.append(c)
+        #     self.class_data.append(os.listdir(class_path))
         
     def generator(self, batch_size=32):
         self.priority = np.random.permutation(self.num_class)
@@ -55,9 +61,9 @@ class DataLoader():
         return len(self.class_data[c])
 
     def path_to(self, c, e):
-        return self.path + '/' + str(c) + '/' + e
+        return os.path.join(self.path, self.labelmap[c], e)
 
-    def random_pair(self, same_class=False, transform=True):
+    def random_pair(self, same_class=False):
         if same_class:
             c = np.random.randint(0, self.num_class)
             p1 = p2 = ''
@@ -66,10 +72,12 @@ class DataLoader():
             p1 = self.path_to(c, p1)
             p2 = self.path_to(c, p2)
         else:
-            c1 = np.random.randint(0, self.num_class)
+            c1 = c2 = 1
+            while c1 == c2:
+                c1 = np.random.randint(0, self.num_class)
+                c2 = np.random.randint(0, self.num_class)
             p1 = np.random.choice(self.class_data[c1])
             p1 = self.path_to(c1, p1)
-            c2 = np.random.randint(0, self.num_class)
             p2 = np.random.choice(self.class_data[c2])
             p2 = self.path_to(c2, p2)
         return p1, p2
