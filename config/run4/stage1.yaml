@@ -1,0 +1,18 @@
+---
+  # General configuration
+  epochs: 10
+  batch_size: 64
+  train_data: ./data/cropped224
+  val_data: null
+  out_dir: exp/run4/stage1
+  
+  # Triplet loss + GOR configuration
+  loss_type: semihard
+  loss_margin: 0.2
+  alpha_gor: 1.0
+  
+  # Model configuration
+  weight: null
+  model: EfficientNetV2B0_128
+  freeze: all
+  unfreeze: [fc, l2_norm]
