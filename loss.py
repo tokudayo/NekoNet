@@ -78,7 +78,7 @@ def _pairwise_distance(embeddings):
     pairwise_distances = torch.mul(pairwise_distances.to(device), mask_offdiagonals.to(device))
     return pairwise_distances
 
-def _semihard(labels, embeddings, device, margin=1.0):
+def _semihard(labels, embeddings, margin=1.0):
     """Computes the triplet loss_functions with semi-hard negative mining.
        The loss_functions encourages the positive distances (between a pair of embeddings
        with the same labels) to be smaller than the minimum negative distance
@@ -93,6 +93,8 @@ def _semihard(labels, embeddings, device, margin=1.0):
          margin: Float, margin term in the loss_functions definition. Default value is 1.0.
          name: Optional name for the op.
        """
+
+    device = embeddings.device
 
     # Reshape label tensor to [batch_size, 1].
     lshape = labels.shape
@@ -148,7 +150,7 @@ def _semihard(labels, embeddings, device, margin=1.0):
     triplet_loss = triplet_loss.to(dtype=embeddings.dtype)
     return triplet_loss
 
-def _hard(labels, embeddings, device, margin=1.0, hardest=False):
+def _hard(labels, embeddings, margin=1.0, hardest=False):
     """
     Args:
         labels: labels of the batch, of size (batch_size,)
@@ -214,24 +216,21 @@ def _gor(labels, embeddings):
     return Lgor
 
 class SemiHardTripletLossWithGOR(nn.Module):
-    def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0):
+    def __init__(self, margin=1.0, alpha_gor=1.0):
         super().__init__()
-        self.device = device
         self.margin = margin
-        self.gor_sample_size = gor_sample_size
         self.alpha_gor = alpha_gor
 
     def forward(self, input, target, **kwargs):
-        return _semihard(target, input, self.device, self.margin) + self.alpha_gor*_gor(target, input)
+        return _semihard(target, input, self.margin) + self.alpha_gor*_gor(target, input)
 
 class HardTripletLossWithGOR(nn.Module):
-    def __init__(self, device, margin=1.0, gor_sample_size=None, alpha_gor=1.0, hardest=False):
+    def __init__(self, margin=1.0, gor_sample_size=None, alpha_gor=1.0, hardest=False):
         super().__init__()
-        self.device = device
         self.margin = margin
         self.gor_sample_size = gor_sample_size
         self.alpha_gor = alpha_gor
         self.hardest = hardest
 
     def forward(self, input, target, **kwargs):
-        return _hard(target, input, self.device, margin=self.margin, hardest=self.hardest) + self.alpha_gor*_gor(target, input)
+        return _hard(target, input, margin=self.margin, hardest=self.hardest) + self.alpha_gor*_gor(target, input)
