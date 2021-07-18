@@ -57,10 +57,10 @@ $ pip install -r requirements.txt
 ```
 
 ### Pretrained models
-|      Backbone     | Dimensions | Params | FLOP | Verification acc | Download |
-|:-----------------:|:----------:|:------:|:----:|:----------------:|:--------:|
-| MobileNetV3-Large |     64     |        |      |                  |          |
-| EfficientNetV2-B0 |     128    |        |      |                  |          |
-|                   |            |        |      |                  |          |
+|      Backbone     | Embedding dimensions | Params | FLOP | Verification acc | Download |
+|:-----------------:|:--------------------:|:------:|:----:|:----------------:|:--------:|
+| MobileNetV3-Large |          64          |        |      |                  |          |
+| EfficientNetV2-B0 |          128         |        |      |                  |          |
+
 ### Training your own network
 
