@@ -26,6 +26,12 @@ We ran queries on [petfinder API](https://www.petfinder.com/developers/v2/docs/)
 There was a problem with the dataset that we could not fix. Although we collected images based on the unique IDs of the cats, there were duplicate classes (different cat IDs but contain the same/similar set of images of a single actual cat).
 
 #### Model structure and techniques
+For each face image, we wanted to produce a feature vector that abstractly captures its unique identity. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the criterion. The distance metric used was Euclidean distance.
+
+The structure of a simple model would consist of a CNN backbone followed by a fully-connected layer. The output would then be L2-normalized to extract the final embedding.
+
+![Facenet's structure](./_static/structure.png)
+
 ### Installation
 ### Pretrained models
 ### Training your own network
