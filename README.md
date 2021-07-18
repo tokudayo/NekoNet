@@ -23,6 +23,7 @@ We ran queries on [petfinder API](https://www.petfinder.com/developers/v2/docs/)
 
 ![Class 818](./_static/cat_818.jpg)
 
+There was a problem with the dataset that we could not fix. Although we collected images based on the unique IDs of the cats, there were duplicate classes (different cat IDs but contain the same/similar set of images of a single actual cat).
 
 #### Model structure and techniques
 ### Installation
