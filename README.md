@@ -20,6 +20,9 @@ Our team's original intent was focused on the cat stuff only, but we believe the
 ### Methodology overview
 #### Cat face dataset
 We ran queries on [petfinder API](https://www.petfinder.com/developers/v2/docs/) to collect images of cats, grouped by their unique IDs. A cat face detector was trained using [YOLOv5](https://github.com/ultralytics/yolov5) to crop out the faces. We fixed/removed bad classes which either contain images of different cats or non-face images. All images were then resized to 224x224. The dataset after these preprocessing steps now has 7,229 classes of 34,906 images.
+
+The figure below shows examples from 2 classes.
+
 Class 818   | Class 5481
 ------------|------------
 ![Class 818](./_static/cat_818.jpg)|![Class 5481](./_static/cat_5481.jpg)
@@ -27,11 +30,14 @@ Class 818   | Class 5481
 There was a problem with the dataset that we could not fix. Although we collected images based on the unique IDs of the cats, there were duplicate classes (different cat IDs but contain the same/similar set of images of a single actual cat).
 
 #### Model structure and techniques
-For each face image, we wanted to produce a feature vector that abstractly captures its unique identity. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the criterion. The distance metric used was Euclidean distance.
+For each face image, we wanted to produce a feature vector that abstractly captures its unique identity. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the criterion. The distance metric used was Euclidean distance. We tried the batch-all, batch-hard and batch-semi-hard techniques in [online triplet mining](https://omoindrot.github.io/triplet-loss) strategy.
 
-The structure of a simple model would consist of a CNN backbone followed by a fully-connected layer. The output would then be L2-normalized to extract the final embedding.
+We also added a loss term called [global orthogonal regularization](https://arxiv.org/abs/1708.06320) that statistically encourages seperate classes to be uniformly distributed on the unit sphere of embedding space.
+
+The structure of a simple model would consist of a CNN backbone followed by a fully-connected layer. The output would then be L2-normalized to extract the final embedding. The figure below summarizes the model architecture.
 
 ![Facenet's structure](./_static/structure.png)
+
 
 ### Installation
 ### Pretrained models
