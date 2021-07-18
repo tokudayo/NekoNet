@@ -57,7 +57,7 @@ $ pip install -r requirements.txt
 ```
 
 ### Pretrained models
-|        Backbone       | FLOP | Verification acc | Download |
+|       Model name      | FLOP | Verification acc | Download |
 |:---------------------:|:----:|:----------------:|:--------:|
 |  MobileNetV3-Large 64 |      |                  |          |
 | EfficientNetV2-B0 128 |      |                  |          |
