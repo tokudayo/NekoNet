@@ -20,8 +20,9 @@ Our team's original intent was focused on the cat stuff only, but we believe the
 ### Methodology overview
 #### Cat face dataset
 We ran queries on [petfinder API](https://www.petfinder.com/developers/v2/docs/) to collect images of cats, grouped by their unique IDs. A cat face detector was trained using [YOLOv5](https://github.com/ultralytics/yolov5) to crop out the faces. We fixed/removed bad classes which either contain images of different cats or non-face images. All images were then resized to 224x224. The dataset after these preprocessing steps now has 7,229 classes of 34,906 images.
-
-![Class 818](./_static/cat_818.jpg)![Class 5481](./_static/cat_5481.jpg)
+Class 818   | Class 5481
+------------|------------
+![Class 818](./_static/cat_818.jpg)|![Class 5481](./_static/cat_5481.jpg)
 
 There was a problem with the dataset that we could not fix. Although we collected images based on the unique IDs of the cats, there were duplicate classes (different cat IDs but contain the same/similar set of images of a single actual cat).
 
