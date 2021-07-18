@@ -31,7 +31,7 @@ Class 818   | Class 5481
 There was a problem with the dataset that we could not fix. Although we collected images based on the unique IDs of the cats, there were duplicate classes (different cat IDs but contain the same/similar set of images of a single actual cat).
 
 #### Model structure and techniques
-For each face image, we wanted to produce a feature vector that abstractly captures its unique identity. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the criterion. The distance metric used was Euclidean distance. We tried the batch-all, batch-hard and batch-semi-hard techniques in [online triplet mining](https://omoindrot.github.io/triplet-loss) strategy. With small batch size, this would partially remedy the problem of duplicate classes because these classes would ruin the training process only if they were sampled in the same batch.
+For each face image, we wanted to produce a feature vector that abstractly captures its unique identity. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the models' criterion. The distance metric used was Euclidean distance. We tried all the techniques (batch-all, batch-hard and batch-semihard) in [the online triplet mining strategy](https://omoindrot.github.io/triplet-loss). With small batch size, this would partially remedy the problem of duplicate classes because these classes would ruin the training process only if they were sampled in the same batch.
 
 We also added a loss term called [global orthogonal regularization](https://arxiv.org/abs/1708.06320) that statistically encourages seperate classes to be uniformly distributed on the unit sphere of embedding space.
 
@@ -39,13 +39,14 @@ The structure of a simple model would consist of a CNN backbone followed by a fu
 
 ![Facenet's structure](./_static/structure.png)
 
-So far, we have experimented with two CNN backbones: MobileNetV3-Large and EfficientNetV2-B0.
+So far, we have experimented with two CNN backbones: MobileNetV3-Large and EfficientNetV2-B0. For embedding dimensions, we have tried 64-D and 128-D.
 
 #### What can be further improved
 From what we observed, here are some factors that can be improved for better results:
 - **The data**: We would want more images per cat, no duplicate classes and more distinct classes.
-- **The model**: We tried moderately small CNN backbones and 64/128 embedding dimensions. Using larger backbones or higher embedding dimensions may produce better result, but would be marginal or have no effect unless we have a better dataset.
-- **The hyperparameters**: We have tried very few combinations of triplet loss margin and the weight of GOR loss.
+- **The model**: We tried moderately small CNN backbones and embedding dimensions. Using larger backbones or/and higher embedding dimensions may produce better results, but would be marginal or have no effect unless we have a better dataset.
+- **Hyperparameters**: We have yet to conclude the best hyperparameters (triplet loss margin, weight of GOR loss) when fitting on the dataset.
+- **Training procedure**: It is recommended to use very large batch size when training triplet loss network, but for performance reason we used at most 64.
 
 ### Installation
 ### Pretrained models
