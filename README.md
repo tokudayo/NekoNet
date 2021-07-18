@@ -43,8 +43,8 @@ So far, we have experimented with two CNN backbones: MobileNetV3-Large and Effic
 
 #### What can be further improved
 From what we observed, here are some factors that can be improved for better results:
-- **The data**: We would want more images per cat, no duplicate classes and more distinct classes.
-- **The model**: We tried moderately small CNN backbones and embedding dimensions. Using larger backbones or/and higher embedding dimensions may produce better results, but would be marginal or have no effect unless we have a better dataset.
+- **Data**: We would want more images per cat, no duplicate classes and more distinct classes.
+- **Model**: We tried moderately small CNN backbones and embedding dimensions. Using larger backbones or/and higher embedding dimensions may produce better results, but would be marginal or have no effect unless we have a better dataset.
 - **Hyperparameters**: We have yet to conclude the best hyperparameters (triplet loss margin, weight of GOR loss) when fitting on the dataset.
 - **Training procedure**: It is recommended to use very large batch size when training triplet loss network, but for performance reason we used at most 64.
 
