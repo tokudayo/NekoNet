@@ -13,9 +13,14 @@ Our team's original intent was focused on the cat stuff only, but we believe the
 - [Methodology overview](#methodology-overview)
   * [The cat face dataset](#the-cat-face-dataset)
   * [Model structure and techniques](#model-structure-and-techniques)
-  * [What can be improved](#what-can-be-further-improved)
+  * [What can be further improved](#what-can-be-further-improved)
 - [Usage](#usage)
+  * [Installation](#installation)
+  * [Inference](#inference)
 - [Pretrained models](#pretrained-models)
+- [Train your own model](#train-your-own-model)
+  * [Training data](#training-data)
+  * [Training configuration](#training-configuration)
 
 ## Methodology overview
 ### The cat face dataset
@@ -56,8 +61,16 @@ $ cd NekoNet
 $ pip install -r requirements.txt
 ```
 
-### Training
-#### Training data
+### Inference
+
+## Pretrained models
+|       Model name      | FLOP | Verification acc | Download |
+|:---------------------:|:----:|:----------------:|:--------:|
+|  MobileNetV3-Large 64 |      |                  |          |
+| EfficientNetV2-B0 128 |      |                  |          |
+
+## Train your own model
+### Training data
 The data should be organized such that images of each class are contained in a single folder, e.g.:
 ```
 └───train
@@ -106,11 +119,4 @@ Create a `.yaml` file that specifies training configuration like `sampleconfig.y
   freeze: all
   unfreeze: [fc, l2_norm]
 ```
-We mostly do multi-stage training. Training configuration of some of our runs can be found in [./config](./config).
-
-## Pretrained models
-|       Model name      | FLOP | Verification acc | Download |
-|:---------------------:|:----:|:----------------:|:--------:|
-|  MobileNetV3-Large 64 |      |                  |          |
-| EfficientNetV2-B0 128 |      |                  |          |
-
+We mostly do multi-stage training. Training configurations of some of our runs can be found in [./config](./config). You can define your own model in `models.py`.
