@@ -16,7 +16,6 @@ Our team's original intent was focused on the cat stuff only, but we believe the
   * [What can be improved](#what-can-be-further-improved)
 - [Usage](#usage)
 - [Pretrained models](#pretrained-models)
-- [Training your own network](#training-your-own-network)
 
 ## Methodology overview
 ### The cat face dataset
@@ -56,6 +55,34 @@ $ git clone https://github.com/20toduc01/NekoNet
 $ cd NekoNet
 $ pip install -r requirements.txt
 ```
+
+### Training
+#### Training data
+The data should be organized such that images of each class are contained in a single folder, e.g.:
+```
+└───train
+    ├───chonk
+    │       1.jpg
+    │       2.jpg
+    │       3.jpg
+    │       ...
+    │
+    ├───marmalade
+    │       1.jpg
+    │       2.jpg
+    │       3.jpg
+    │       ...
+    │
+    ├───...
+    │
+    └───unnamed
+            1.jpg
+            2.jpg
+            4.jpg
+            5.jpg
+```
+
+See [our sample dataset](./data/sample/train) for reference.
 
 ## Pretrained models
 |       Model name      | FLOP | Verification acc | Download |
