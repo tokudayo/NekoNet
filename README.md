@@ -84,6 +84,30 @@ The data should be organized such that images of each class are contained in a s
 
 See [our sample dataset](./data/sample/train) for reference.
 
+### Training configuration
+Create a `.yaml` file that specifies training configuration like `sampleconfig.yaml`:
+```yaml
+---
+  # General configuration
+  epochs: 20
+  batch_size: 16
+  train_data: ./data/sample/train
+  val_data: null
+  out_dir: exp/sample
+  
+  # Triplet loss + GOR configuration
+  loss_type: semihard
+  loss_margin: 1.0
+  alpha_gor: 1.0
+  
+  # Model configuration
+  weight: null
+  model: MobileNetV3L_64
+  freeze: all
+  unfreeze: [fc, l2_norm]
+```
+We mostly do multi-stage training. Training configuration of some of our runs can be found in [./config](./config).
+
 ## Pretrained models
 |       Model name      | FLOP | Verification acc | Download |
 |:---------------------:|:----:|:----------------:|:--------:|
