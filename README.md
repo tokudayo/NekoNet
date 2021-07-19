@@ -14,7 +14,7 @@ Our team's original intent was focused on the cat stuff only, but we believe the
   * [The cat face dataset](#the-cat-face-dataset)
   * [Model structure and techniques](#model-structure-and-techniques)
   * [What can be improved](#what-can-be-further-improved)
-- [Installation](#installation)
+- [Usage](#usage)
 - [Pretrained models](#pretrained-models)
 - [Training your own network](#training-your-own-network)
 
@@ -48,7 +48,8 @@ From what we observed, here are some factors that can be improved for better res
 - **Hyperparameters**: We have yet to conclude the best hyperparameters (triplet loss margin, weight of GOR loss) when fitting on the dataset.
 - **Training procedure**: It is recommended to use very large batch size when training triplet loss network, but for performance reason we used at most 64.
 
-## Installation
+## Usage
+### Installation
 Clone this repo and install the dependencies
 ```bash
 $ git clone https://github.com/20toduc01/NekoNet
@@ -61,6 +62,4 @@ $ pip install -r requirements.txt
 |:---------------------:|:----:|:----------------:|:--------:|
 |  MobileNetV3-Large 64 |      |                  |          |
 | EfficientNetV2-B0 128 |      |                  |          |
-
-## Training your own network
 
