@@ -78,6 +78,33 @@ def select_model(choice):
     except:
         print(f'Class {choice} not found. You can define a your model in models.py')
 
+def onnx_export(model, name):
+    import torch.onnx
+    import os
+    os.makedirs('./export')
+    fpath = os.path.join('./export', name)
+    if os.path.isfile(fpath):
+        print("Warning: file already exists. Continue? (y/n)")
+        t = input()
+        if t[0].lower() != 'y':
+            return
+        
+    batch_size = 1
+    channel = 3
+    height = width = 224
+    dummy_input = torch.randn(batch_size, channel, height, width)
+
+    torch.onnx.export(model,                     # model being run
+                    dummy_input,               # model input (or a tuple for multiple inputs)
+                    fpath,                # where to save the model (can be a file or file-like object)
+                    export_params=True,        # store the trained parameter weights inside the model file
+                    opset_version=12,          # the ONNX version to export the model to (default 9). 12 de cung version voi YOLOv5
+                    do_constant_folding=True,  # whether to execute constant folding for optimization
+                    input_names = ['input'],   # the model's input names
+                    output_names = ['output'], # the model's output names
+                    dynamic_axes={'input' : {0 : 'batch_size'},    # variable length axes
+                                    'output' : {0 : 'batch_size'}})
+
 # For backward compatibility
 def load_weight(model, weightpath):
     ref = torch.load(weightpath)
