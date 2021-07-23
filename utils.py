@@ -77,3 +77,8 @@ def select_model(choice):
         return class_()
     except:
         print(f'Class {choice} not found. You can define a your model in models.py')
+
+# For backward compatibility
+def load_weight(model, weightpath):
+    ref = torch.load(weightpath)
+    model.load_state_dict(ref.state_dict())
