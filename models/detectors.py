@@ -1,4 +1,4 @@
-import torch, cv2, os, urllib, torchvision
+import torch, cv2, os, urllib.request, torchvision
 import numpy as np
 
 img_size = 640
@@ -9,8 +9,7 @@ class Yolov5Detector():
         if device == 'auto':
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         if not os.path.isfile('./models/yolov5.torchscript.pt'):
-            downloader = urllib.URLopener()
-            downloader.retrieve("aaaaaaaaaaaaaaaaaaaaaaaaaaa", "./models/yolov5.torchscript.pt")
+            urllib.request.urlretrieve('https://github.com/20toduc01/NekoNet/releases/download/v1.1/yolov5.torchscript.pt', './models/yolov5.torchscript.pt')
         with open('./models/yolov5.torchscript.pt', 'rb') as f:
             self.model = torch.jit.load(f, map_location=self.device)
 
