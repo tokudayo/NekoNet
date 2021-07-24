@@ -1,4 +1,4 @@
-import torch
+import torch, yaml
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -29,6 +29,7 @@ def batch_to_images(X, y):
         plt.title(y[index].item())
     plt.show()
 
+
 def save_model(model, opt, ep, path):
     state = {
         'epoch': ep,
@@ -38,12 +39,12 @@ def save_model(model, opt, ep, path):
     torch.save(state, path)
 
 
-import yaml
 def load_yaml(path):
     file = open(path, 'r')
     options = yaml.load(file, Loader=yaml.FullLoader)
     file.close()
     return options
+
 
 # Horrible and unsafe way to freeze/unfreeze layers, but I'm desperate
 def freeze(model, layers):
@@ -56,6 +57,7 @@ def freeze(model, layers):
         for layer in layers:
             print(f"Freezing {layer}")
             exec(f'''for param in model.{layer}.parameters():\n    param.requires_grad = False''')
+
 
 def unfreeze(model, layers):
     if layers is None: return
@@ -76,6 +78,7 @@ def select_model(choice):
         return class_()
     except:
         print(f'Class {choice} not found. You can define a your model in models.py')
+
 
 def onnx_export(model, name):
     import torch.onnx
@@ -103,6 +106,7 @@ def onnx_export(model, name):
                     output_names = ['output'], # the model's output names
                     dynamic_axes={'input' : {0 : 'batch_size'},    # variable length axes
                                     'output' : {0 : 'batch_size'}})
+
 
 # For backward compatibility
 def load_weight(model, weightpath):
