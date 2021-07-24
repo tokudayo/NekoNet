@@ -134,3 +134,5 @@ verification.ipynb
 identification.ipynb
 exp/*
 data/*
+*.pt
+*.onnx
