@@ -3,9 +3,9 @@ import torch, os
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 from models.descriptors import *
-from utils.utils import *
-from loss import *
-from dataloader import DataLoader
+from utils.general import *
+from utils.loss import *
+from utils.dataloader import DataLoader
 
 
 def parse_args():

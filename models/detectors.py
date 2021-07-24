@@ -1,6 +1,5 @@
-import torch, cv2, os, urllib
+import torch, cv2, os, urllib, torchvision
 import numpy as np
-import torch, cv2, torchvision
 
 img_size = 640
 stride = 32
