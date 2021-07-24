@@ -17,7 +17,6 @@ class Yolov5Detector():
         try:
             # Padded resize
             img = letterbox(cv2img, auto=False)[0]
-            resized = np.array(img)
             # Convert
             img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
             img = np.ascontiguousarray(img)
@@ -28,8 +27,6 @@ class Yolov5Detector():
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
-
-        print(img.shape)
 
         pred = self.model(img)[0]
 
