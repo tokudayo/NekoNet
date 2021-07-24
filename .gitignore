@@ -136,3 +136,4 @@ exp/*
 data/*
 *.pt
 *.onnx
+db/*
