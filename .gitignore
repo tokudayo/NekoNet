@@ -130,9 +130,7 @@ dmypy.json
 
 .vscode/
 test.*
-verify.ipynb
+verification.ipynb
 identification.ipynb
 exp/*
 data/*
-alignment/*
-detector/*
