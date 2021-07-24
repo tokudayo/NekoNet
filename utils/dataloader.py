@@ -1,7 +1,6 @@
 import os, torch
 import numpy as np
 from torchvision.io import read_image
-from torchvision.transforms import Resize
 
 class DataLoader():
     def __init__(self, path, tsnf=None, cache_path=None):
