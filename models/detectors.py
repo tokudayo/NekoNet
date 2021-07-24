@@ -1,4 +1,4 @@
-import torch, cv2, os, urllib.request, torchvision
+import torch, cv2, os, urllib, torchvision
 import numpy as np
 
 img_size = 640
