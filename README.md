@@ -65,9 +65,9 @@ $ pip install -r requirements.txt
 ### Inference
 
 ## Pretrained models
-|       Model name      | Params<br><sup>M</sup> | Verification acc<br><sup>%</sup> | TorchScript download |
+|       Model name      | Params<br><sup>M</sup> | Verification acc<br><sup>%</sup> | Download |
 |:---------------------:|:----------------------:|:--------------------------------:|:--------------------:|
-| EfficientNetV2-B0 128 |            6           |               96.2               |         [link](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.torchscript.pt)             |
+| EfficientNetV2-B0 128 |            6           |               96.2               |         [TorchScript](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.torchscript.pt) · [ONNX](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.onnx)            |
 ## Train your own model
 ### Training data
 The data should be organized such that images of each class are contained in a single folder, e.g.:
