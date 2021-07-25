@@ -65,11 +65,9 @@ $ pip install -r requirements.txt
 ### Inference
 
 ## Pretrained models
-|       Model name      | FLOP | Verification acc | Download |
-|:---------------------:|:----:|:----------------:|:--------:|
-|  MobileNetV3-Large 64 |      |                  |          |
-| EfficientNetV2-B0 128 |      |                  |          |
-
+|       Model name      | Params<br><sup>M</sup> | Verification acc<br><sup>%</sup> | TorchScript download |
+|:---------------------:|:----------------------:|:--------------------------------:|:--------------------:|
+| EfficientNetV2-B0 128 |            6           |               96.2               |         [link](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.torchscript.pt)             |
 ## Train your own model
 ### Training data
 The data should be organized such that images of each class are contained in a single folder, e.g.:
