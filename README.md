@@ -156,4 +156,4 @@ $ python train.py --config path_to_config.yaml
 
 ## References
 - Our work was much inspired by [Adam Klein's report](http://cs230.stanford.edu/projects_fall_2019/reports/26251543.pdf).
-- [Learning Spread-out Local Feature Descriptors](https://arxiv.org/abs/1708.06320)
+- [Learning Spread-out Local Feature Descriptors](https://arxiv.org/abs/1708.06320), Zhang et al. (2017).
