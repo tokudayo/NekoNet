@@ -148,7 +148,7 @@ Create a `.yaml` file that specifies training configuration like `sampleconfig.y
   freeze: all
   unfreeze: [fc, l2_norm]
 ```
-Training configurations of some of our runs can be found in `./config`. You can define your own model in `models/descriptors.py`.
+Training configurations of some of our runs can be found in `./config/`. You can define your own model in `./models/descriptors.py`.
 
 ### Start training
 Simply run:
