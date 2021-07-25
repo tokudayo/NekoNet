@@ -5,8 +5,6 @@ This PyTorch repo contains:
 - The cat face dataset we mined and used for training.
 - Some models we trained using the framework.
 
-Our work was much inspired by [Adam Klein's report](http://cs230.stanford.edu/projects_fall_2019/reports/26251543.pdf).
-
 Our team's original intent was focused on the cat stuff only, but we believe these tools can be used for training embedding extractor of other objects (e.g., human faces) as long as you have the data.
 
 ## Table of contents
@@ -155,3 +153,7 @@ Simply run:
 ```bash
 $ python train.py --config path_to_config.yaml
 ```
+
+## References
+- Our work was much inspired by [Adam Klein's report](http://cs230.stanford.edu/projects_fall_2019/reports/26251543.pdf).
+- [Learning Spread-out Local Feature Descriptors](https://arxiv.org/abs/1708.06320)
