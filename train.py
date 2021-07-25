@@ -104,7 +104,7 @@ def train(cfg_path):
             optimizer.step()
         loss_epoch.append(np.average(loss_batch))
         print(f'Epoch {ep + 1} loss = {loss_epoch[-1]}')
-        save_model(model, optimizer, ep, out_dir + f'/last.pt')
+        save_training(model, optimizer, ep, out_dir + f'/last.pt')
         torch.save(loss_epoch, out_dir + '/loss.pt')
 
     torch.save(model, out_dir + '/final.pt')

@@ -120,4 +120,4 @@ Create a `.yaml` file that specifies training configuration like `sampleconfig.y
   freeze: all
   unfreeze: [fc, l2_norm]
 ```
-We mostly do multi-stage training. Training configurations of some of our runs can be found in [./config](./config). You can define your own model in `models.py`.
+We mostly do multi-stage training. Training configurations of some of our runs can be found in `./config`. You can define your own model in `models/descriptors.py`.

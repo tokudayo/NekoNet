@@ -30,7 +30,7 @@ def batch_to_images(X, y):
     plt.show()
 
 
-def save_model(model, opt, ep, path):
+def save_training(model, opt, ep, path):
     state = {
         'epoch': ep,
         'state_dict': model.state_dict(),
