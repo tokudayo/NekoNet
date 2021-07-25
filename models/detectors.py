@@ -1,3 +1,4 @@
+from utils.general import attempt_download
 import torch, cv2, os, urllib, torchvision
 import numpy as np
 
@@ -8,8 +9,7 @@ class Yolov5Detector():
     def __init__(self, device='auto'):
         if device == 'auto':
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        if not os.path.isfile('./models/yolov5.torchscript.pt'):
-            urllib.request.urlretrieve('https://github.com/20toduc01/NekoNet/releases/download/v1.1/yolov5.torchscript.pt', './models/yolov5.torchscript.pt')
+        attempt_download('./models/yolov5.torchscript.pt', 'https://github.com/20toduc01/NekoNet/releases/download/v1.1/yolov5.torchscript.pt')
         with open('./models/yolov5.torchscript.pt', 'rb') as f:
             self.model = torch.jit.load(f, map_location=self.device)
 

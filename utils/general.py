@@ -111,4 +111,10 @@ def onnx_export(model, name):
 # For backward compatibility
 def load_weight(model, weightpath):
     ref = torch.load(weightpath)
-    model.load_state_dict(ref.state_dict())
+    model.load_state_dict(ref)
+
+import urllib, os
+def attempt_download(localpath, dllink):
+    if not os.path.isfile(localpath):
+        print(f'{localpath} not found, downloading from {dllink}')
+        urllib.request.urlretrieve(dllink, localpath)
