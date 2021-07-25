@@ -1,4 +1,4 @@
-import torch, yaml
+import torch, yaml, urllib, os
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -96,11 +96,11 @@ def onnx_export(model, name):
     height = width = 224
     dummy_input = torch.randn(batch_size, channel, height, width)
 
-    torch.onnx.export(model,                     # model being run
+    torch.onnx.export(model,                   # model being run
                     dummy_input,               # model input (or a tuple for multiple inputs)
-                    fpath,                # where to save the model (can be a file or file-like object)
+                    fpath,                     # where to save the model (can be a file or file-like object)
                     export_params=True,        # store the trained parameter weights inside the model file
-                    opset_version=12,          # the ONNX version to export the model to (default 9). 12 de cung version voi YOLOv5
+                    opset_version=12,          # the ONNX version to export the model to (default 9).
                     do_constant_folding=True,  # whether to execute constant folding for optimization
                     input_names = ['input'],   # the model's input names
                     output_names = ['output'], # the model's output names
@@ -108,12 +108,11 @@ def onnx_export(model, name):
                                     'output' : {0 : 'batch_size'}})
 
 
-# For backward compatibility
 def load_weight(model, weightpath):
     ref = torch.load(weightpath)
     model.load_state_dict(ref)
 
-import urllib, os
+
 def attempt_download(localpath, dllink):
     if not os.path.isfile(localpath):
         print(f'{localpath} not found, downloading from {dllink}')
