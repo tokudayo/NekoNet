@@ -17,7 +17,7 @@ class L2Norm(nn.Module):
         super(L2Norm, self).__init__()
 
     def forward(self, x):
-        return F.normalize(x, p = 2, dim = -1)
+        return F.normalize(x, p = 2., dim = -1)
 
 class EfficientNetV2B0_128(nn.Module):
     def __init__(self, pretrained=False):
