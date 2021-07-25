@@ -55,7 +55,7 @@ From what we observed, here are some factors that can be improved for better res
 
 ## Usage
 ### Installation
-Clone this repo and install the dependencies
+Clone this repo and install the dependencies:
 ```bash
 $ git clone https://github.com/20toduc01/NekoNet
 $ cd NekoNet
@@ -151,7 +151,7 @@ Create a `.yaml` file that specifies training configuration like `sampleconfig.y
 Training configurations of some of our runs can be found in `./config`. You can define your own model in `models/descriptors.py`.
 
 ### Start training
-Simply run
+Simply run:
 ```bash
 $ python train.py --config path_to_config.yaml
 ```
