@@ -33,7 +33,7 @@ Class 818   | Class 5481
 There was a problem with the dataset that we could not fix. Although we collected images based on the unique IDs of the cats, there were duplicate classes (different cat IDs but contain the same/similar set of images of a single actual cat).
 
 ### Model structure and techniques
-For each face image input, we wanted to output a feature vector that abstractly captures its features. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the models' criterion. The distance metric used was Euclidean distance. We tried all the techniques (batch-all, batch-hard and batch-semihard) in [the online triplet mining strategy](https://omoindrot.github.io/triplet-loss). With small batch size, this would partially remedy the problem of duplicate classes because these classes would ruin the training process only if they were sampled in the same batch.
+For each face image input, we wanted to output a feature vector that abstractly captures its features. To achieve that, we used [triplet loss](https://arxiv.org/abs/1503.03832) as the models' criterion. The distance metric used was Euclidean distance. We tried all the techniques (batch-all, batch-hard and batch-semihard) in [the online triplet mining strategy](https://omoindrot.github.io/triplet-loss). With moderate batch size, this would partially remedy the problem of duplicate classes because these classes would ruin the training process only if they were sampled in the same batch.
 
 We also added a loss term called [global orthogonal regularization](https://arxiv.org/abs/1708.06320) that statistically encourages seperate classes to be uniformly distributed on the unit sphere of embedding space.
 
@@ -49,7 +49,7 @@ From what we observed, here are some factors that can be improved for better res
 - **Preprocessing**: Training and inference with face alignment would certainly produce better results.
 - **Model**: We tried moderately small CNN backbones and embedding dimensions. Using larger backbones or/and higher embedding dimensions may produce better results, but would be marginal or have no effect unless we have a better dataset.
 - **Hyperparameters**: We have yet to conclude the best hyperparameters (triplet loss margin, weight of GOR loss) when fitting on the dataset.
-- **Training procedure**: It is recommended to use a very large batch size when training a triplet loss network, but for performance reasons we used at most 64.
+- **Training procedure**: It is recommended to use a very large batch size when training a triplet loss network, but initally for performance reasons we used at most 64.
 
 ## Usage
 ### Installation
@@ -83,7 +83,7 @@ path_to_image = './data/sample/test/2_2.jpg'
 image = read_image(path_to_image).to(device) # 3xHxW uint8 torch tensor
 embedding = model(torch.unsqueeze(transform(image), 0))
 ```
-See `Example.ipynb` for usage with our pretrained face detector.
+See `example.ipynb` for usage with our pretrained face detector.
 ## Pretrained models
 |       Model name      | Params (M) | Verification acc (%) | Download |
 |:---------------------:|:----------:|:--------------------:|:--------:|
