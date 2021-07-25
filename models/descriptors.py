@@ -27,7 +27,7 @@ class EfficientNetV2B0_128(nn.Module):
         self.fc = nn.Linear(1280, 128)
         self.l2_norm = L2Norm()
         if pretrained:
-            attempt_download('./models/efficientnetv2_b0_state.pt', 'https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2b0_128_state.pt')
+            attempt_download('./models/efficientnetv2_b0_state.pt', 'https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128_state.pt')
             load_weight(self, './models/efficientnetv2_b0_state.pt')
 
     def forward(self, x):

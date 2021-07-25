@@ -83,7 +83,10 @@ def select_model(choice):
 def onnx_export(model, name):
     import torch.onnx
     import os
-    os.makedirs('./export')
+    try:
+        os.makedirs('./export')
+    except:
+        pass
     fpath = os.path.join('./export', name)
     if os.path.isfile(fpath):
         print("Warning: file already exists. Continue? (y/n)")
