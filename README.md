@@ -67,7 +67,15 @@ $ pip install -r requirements.txt
 ## Pretrained models
 |       Model name      | Params (M) | Verification acc (%) | Download |
 |:---------------------:|:----------:|:--------------------:|:--------:|
-| EfficientNetV2-B0 128 |      6     |         96.2         |         [TorchScript](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.torchscript.pt) · [ONNX](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.onnx)            |
+| EfficientNetV2-B0 128 |      6.02     |         96.2         |         [TorchScript](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.torchscript.pt) · [ONNX](https://github.com/20toduc01/NekoNet/releases/download/v1.1/effnetv2_b0_128.onnx)            |
+
+
+You can also load pretrained model in normal torch form, e.g.:
+```py
+from models.descriptors import EfficientNetV2B0_128
+model = EfficientNetV2B0_128(pretrained=True)
+```
+
 ## Train your own model
 ### Training data
 The data should be organized such that images of each class are contained in a single folder, e.g.:
