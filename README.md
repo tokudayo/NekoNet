@@ -63,7 +63,7 @@ $ pip install -r requirements.txt
 ```
 
 ### Inference
-Creating a model with pre-trained weights:
+Creat a model with pre-trained weights:
 ```py
 import torch
 from models.descriptors import EfficientNetV2B0_128
@@ -149,3 +149,9 @@ Create a `.yaml` file that specifies training configuration like `sampleconfig.y
   unfreeze: [fc, l2_norm]
 ```
 Training configurations of some of our runs can be found in `./config`. You can define your own model in `models/descriptors.py`.
+
+### Start training
+Simply run
+```bash
+$ python train.py --config path_to_config.yaml
+```
