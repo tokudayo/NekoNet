@@ -63,7 +63,29 @@ $ pip install -r requirements.txt
 ```
 
 ### Inference
+Creating a model with pre-trained weights:
+```py
+import torch
+from models.descriptors import EfficientNetV2B0_128
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = EfficientNetV2B0_128(pretrained=True).to(device).eval()
+```
+Required transformation for a batch of images:
+```py
+import torchvision.transforms as T
+transform = T.Compose([T.Resize((224, 224)),
+                       lambda x : x/255.0,
+                       T.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
+```
+Get the vector embedding of a single **face image**:
+```py
+from torchvision.io import read_image
+path_to_image = './data/sample/test/2_2.jpg'
+image = read_image(path_to_image).to(device) # 3xHxW uint8 torch tensor
+embedding = model(torch.unsqueeze(transform(image), 0))
+```
+See `Example.ipynb` for usage with our pretrained face detector.
 ## Pretrained models
 |       Model name      | Params (M) | Verification acc (%) | Download |
 |:---------------------:|:----------:|:--------------------:|:--------:|
@@ -126,4 +148,4 @@ Create a `.yaml` file that specifies training configuration like `sampleconfig.y
   freeze: all
   unfreeze: [fc, l2_norm]
 ```
-We mostly do multi-stage training. Training configurations of some of our runs can be found in `./config`. You can define your own model in `models/descriptors.py`.
+Training configurations of some of our runs can be found in `./config`. You can define your own model in `models/descriptors.py`.
