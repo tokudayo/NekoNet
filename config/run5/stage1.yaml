@@ -1,7 +1,7 @@
 ---
   # General configuration
   epochs: 30
-  batch_size: 256
+  batch_size: 128
   train_data: ../../input/catface/cropped224
   val_data: null
   out_dir: exp/run5/stage1
