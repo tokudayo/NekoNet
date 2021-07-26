@@ -77,7 +77,7 @@ def select_model(choice):
         class_ = getattr(models, choice)
         return class_()
     except:
-        print(f'Class {choice} not found. You can define a your model in models.py')
+        print(f'Class {choice} not found. You can define a your model in models/descriptors.py')
 
 
 def onnx_export(model, name):

@@ -1,0 +1,18 @@
+---
+  # General configuration
+  epochs: 30
+  batch_size: 256
+  train_data: ../../input/catface/cropped224
+  val_data: null
+  out_dir: exp/run5/stage1
+  
+  # Triplet loss + GOR configuration
+  loss_type: semihard
+  loss_margin: 0.2
+  alpha_gor: 1.0
+  
+  # Model configuration
+  weight: ./checkpoint.pt
+  model: EfficientNetV2B0_128
+  freeze: null
+  unfreeze: all

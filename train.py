@@ -30,15 +30,15 @@ def train(cfg_path):
     out_dir = opt['out_dir']
 
     # Model conf.
+    model = select_model(opt['model'])
+    if model is None: return
     if opt['weight'] is not None:
         try:
-            model = torch.load(opt['weight'])
+            load_weight(model, opt['weight'])
         except:
             print(f"Failed to load weight from {opt['weight']}.")
             return
-    else:
-        model = select_model(opt['model'])
-        if model is None: return
+
     model = model.to(device)
     print(model)
     freeze(model, opt['freeze'])
